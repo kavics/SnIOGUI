@@ -2,20 +2,69 @@ namespace SnIoGui
 {
     public partial class Form1 : Form
     {
-        public Form1()
+        private readonly SnIoGuiSettings _settings;
+
+        public Form1(Microsoft.Extensions.Options.IOptions<SnIoGuiSettings> options)
         {
+            _settings = options.Value;
             InitializeComponent();
+            var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            this.Text = $"sensenet Importer V{version.Major}.{version.Minor}.{version.Build}";
+            if (_settings.Targets != null)
+            {
+                var targetsWithEmpty = new List<Target> { new Target { Name = string.Empty } };
+                targetsWithEmpty.AddRange(_settings.Targets);
+                cmbTargets.DataSource = targetsWithEmpty;
+                cmbTargets.DisplayMember = "Name";
+                cmbTargets.SelectedIndex = 0;
+            }
+            txtPath.Text = string.Empty;
+            cmbTargets.SelectedIndexChanged += cmbTargets_SelectedIndexChanged;
+        }
+
+        private void cmbTargets_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Clear tree and content
+            tree.Nodes.Clear();
+            txtContent.Clear();
+
+            if (cmbTargets.SelectedIndex > 0 && _settings != null)
+            {
+                var selectedTarget = cmbTargets.SelectedItem as Target;
+                if (selectedTarget != null && !string.IsNullOrEmpty(selectedTarget.ImportPath))
+                {
+                    txtPath.Text = selectedTarget.ImportPath;
+                }
+                else
+                {
+                    txtPath.Text = string.Empty;
+                }
+            }
+            else
+            {
+                txtPath.Text = string.Empty;
+            }
         }
 
         // Show file or directory content in textarea when a node is selected
+        private string _lastLoadedFilePath = null;
+        private string _lastLoadedFileContent = null;
+
         private void tree_AfterSelect(object sender, TreeViewEventArgs e)
         {
             txtContent.Clear();
             txtContent.ReadOnly = true;
+            btnImport.Enabled = false;
+            btnSaveContent.Enabled = false;
+            _lastLoadedFilePath = null;
+            _lastLoadedFileContent = null;
             if (e.Node?.Tag is string path)
             {
                 if (System.IO.Directory.Exists(path))
                 {
+                    // Enable import only if path contains a segment named "Root"
+                    btnImport.Enabled = path.Split(System.IO.Path.DirectorySeparatorChar)
+                        .Any(segment => string.Equals(segment, "Root", StringComparison.OrdinalIgnoreCase));
                     try
                     {
                         var dirs = System.IO.Directory.GetDirectories(path).Select(System.IO.Path.GetFileName).Where(n => n != null).Cast<string>().ToList();
@@ -39,11 +88,26 @@ namespace SnIoGui
                 {
                     try
                     {
-                        txtContent.Text = System.IO.File.ReadAllText(path);
+                        var fileContent = System.IO.File.ReadAllText(path);
+                        txtContent.Text = fileContent;
                         txtContent.ReadOnly = false;
+                        _lastLoadedFilePath = path;
+                        _lastLoadedFileContent = fileContent;
+                        btnSaveContent.Enabled = false;
                     }
                     catch { txtContent.Text = "[Could not read file]"; }
                 }
+            }
+        }
+        private void txtContent_TextChanged(object sender, EventArgs e)
+        {
+            if (_lastLoadedFilePath != null && !_lastLoadedFileContent.Equals(txtContent.Text))
+            {
+                btnSaveContent.Enabled = true;
+            }
+            else
+            {
+                btnSaveContent.Enabled = false;
             }
         }
 

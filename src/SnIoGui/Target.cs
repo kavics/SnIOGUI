@@ -1,0 +1,13 @@
+using System.Diagnostics;
+
+namespace SnIoGui
+{
+    [DebuggerDisplay("{Name}")]
+    public class Target
+    {
+        public string Name { get; set; }
+        public string Url { get; set; }
+        public string ApiKey { get; set; }
+        public string ImportPath { get; set; }
+    }
+}

@@ -33,6 +33,7 @@
             btnSaveContent = new Button();
             panelNav = new Panel();
             navLayout = new TableLayoutPanel();
+            cmbTargets = new ComboBox();
             txtPath = new TextBox();
             btnGo = new Button();
             mainSplit = new SplitContainer();
@@ -55,25 +56,29 @@
             actionPanel.Location = new Point(0, 36);
             actionPanel.Name = "actionPanel";
             actionPanel.Padding = new Padding(2);
-            actionPanel.Size = new Size(900, 40);
+            actionPanel.Size = new Size(900, 32);
             actionPanel.TabIndex = 1;
             // 
             // btnImport
             // 
             btnImport.Dock = DockStyle.Left;
+            btnImport.Enabled = false;
+            btnImport.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             btnImport.Location = new Point(2, 2);
             btnImport.Name = "btnImport";
-            btnImport.Size = new Size(100, 36);
+            btnImport.Size = new Size(130, 28);
             btnImport.TabIndex = 0;
-            btnImport.Text = "Import";
+            btnImport.Text = "Import Selected";
             btnImport.Click += btnImport_Click;
             // 
             // btnSaveContent
             // 
             btnSaveContent.Dock = DockStyle.Right;
-            btnSaveContent.Location = new Point(798, 2);
+            btnSaveContent.Enabled = false;
+            btnSaveContent.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            btnSaveContent.Location = new Point(778, 2);
             btnSaveContent.Name = "btnSaveContent";
-            btnSaveContent.Size = new Size(100, 36);
+            btnSaveContent.Size = new Size(120, 28);
             btnSaveContent.TabIndex = 1;
             btnSaveContent.Text = "Save Content";
             btnSaveContent.Click += btnSaveContent_Click;
@@ -90,11 +95,13 @@
             // 
             // navLayout
             // 
-            navLayout.ColumnCount = 2;
+            navLayout.ColumnCount = 3;
+            navLayout.ColumnStyles.Add(new ColumnStyle());
             navLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             navLayout.ColumnStyles.Add(new ColumnStyle());
-            navLayout.Controls.Add(txtPath, 0, 0);
-            navLayout.Controls.Add(btnGo, 1, 0);
+            navLayout.Controls.Add(cmbTargets, 0, 0);
+            navLayout.Controls.Add(txtPath, 1, 0);
+            navLayout.Controls.Add(btnGo, 2, 0);
             navLayout.Dock = DockStyle.Fill;
             navLayout.GrowStyle = TableLayoutPanelGrowStyle.FixedSize;
             navLayout.Location = new Point(2, 2);
@@ -104,16 +111,25 @@
             navLayout.Size = new Size(896, 32);
             navLayout.TabIndex = 0;
             // 
+            // cmbTargets
+            // 
+            cmbTargets.Dock = DockStyle.Left;
+            cmbTargets.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbTargets.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            cmbTargets.Location = new Point(3, 3);
+            cmbTargets.Name = "cmbTargets";
+            cmbTargets.Size = new Size(200, 25);
+            cmbTargets.TabIndex = 0;
+            // 
             // txtPath
             // 
             txtPath.Dock = DockStyle.Fill;
             txtPath.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            txtPath.Location = new Point(4, 4);
+            txtPath.Location = new Point(210, 4);
             txtPath.Margin = new Padding(4, 4, 8, 4);
             txtPath.Name = "txtPath";
-            txtPath.Size = new Size(838, 25);
+            txtPath.Size = new Size(632, 25);
             txtPath.TabIndex = 0;
-            txtPath.Text = "D:\\dev\\tfs\\Manfred\\import\\common";
             // 
             // btnGo
             // 
@@ -128,7 +144,7 @@
             // mainSplit
             // 
             mainSplit.Dock = DockStyle.Fill;
-            mainSplit.Location = new Point(0, 76);
+            mainSplit.Location = new Point(0, 68);
             mainSplit.Name = "mainSplit";
             // 
             // mainSplit.Panel1
@@ -140,7 +156,7 @@
             // 
             mainSplit.Panel2.Controls.Add(txtContent);
             mainSplit.Panel2MinSize = 100;
-            mainSplit.Size = new Size(900, 524);
+            mainSplit.Size = new Size(900, 532);
             mainSplit.SplitterDistance = 276;
             mainSplit.TabIndex = 0;
             // 
@@ -150,7 +166,7 @@
             tree.HideSelection = false;
             tree.Location = new Point(0, 0);
             tree.Name = "tree";
-            tree.Size = new Size(276, 524);
+            tree.Size = new Size(276, 532);
             tree.TabIndex = 0;
             tree.AfterSelect += tree_AfterSelect;
             // 
@@ -161,8 +177,9 @@
             txtContent.Multiline = true;
             txtContent.Name = "txtContent";
             txtContent.ScrollBars = ScrollBars.Both;
-            txtContent.Size = new Size(620, 524);
+            txtContent.Size = new Size(620, 532);
             txtContent.TabIndex = 0;
+            txtContent.TextChanged += txtContent_TextChanged;
             // 
             // Form1
             // 
@@ -193,6 +210,7 @@
         private Button btnSaveContent;
         private Panel panelNav;
         private TableLayoutPanel navLayout;
+        private ComboBox cmbTargets;
         private TextBox txtPath;
         private Button btnGo;
         private SplitContainer mainSplit;
