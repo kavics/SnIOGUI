@@ -1,0 +1,202 @@
+﻿namespace SnIoGui
+{
+    partial class Form1
+    {
+        /// <summary>
+        ///  Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        ///  Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        ///  Required method for Designer support - do not modify
+        ///  the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            actionPanel = new Panel();
+            btnImport = new Button();
+            btnSaveContent = new Button();
+            panelNav = new Panel();
+            navLayout = new TableLayoutPanel();
+            txtPath = new TextBox();
+            btnGo = new Button();
+            mainSplit = new SplitContainer();
+            tree = new TreeView();
+            txtContent = new TextBox();
+            actionPanel.SuspendLayout();
+            panelNav.SuspendLayout();
+            navLayout.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)mainSplit).BeginInit();
+            mainSplit.Panel1.SuspendLayout();
+            mainSplit.Panel2.SuspendLayout();
+            mainSplit.SuspendLayout();
+            SuspendLayout();
+            // 
+            // actionPanel
+            // 
+            actionPanel.Controls.Add(btnImport);
+            actionPanel.Controls.Add(btnSaveContent);
+            actionPanel.Dock = DockStyle.Top;
+            actionPanel.Location = new Point(0, 36);
+            actionPanel.Name = "actionPanel";
+            actionPanel.Padding = new Padding(2);
+            actionPanel.Size = new Size(900, 40);
+            actionPanel.TabIndex = 1;
+            // 
+            // btnImport
+            // 
+            btnImport.Dock = DockStyle.Left;
+            btnImport.Location = new Point(2, 2);
+            btnImport.Name = "btnImport";
+            btnImport.Size = new Size(100, 36);
+            btnImport.TabIndex = 0;
+            btnImport.Text = "Import";
+            btnImport.Click += btnImport_Click;
+            // 
+            // btnSaveContent
+            // 
+            btnSaveContent.Dock = DockStyle.Right;
+            btnSaveContent.Location = new Point(798, 2);
+            btnSaveContent.Name = "btnSaveContent";
+            btnSaveContent.Size = new Size(100, 36);
+            btnSaveContent.TabIndex = 1;
+            btnSaveContent.Text = "Save Content";
+            btnSaveContent.Click += btnSaveContent_Click;
+            // 
+            // panelNav
+            // 
+            panelNav.Controls.Add(navLayout);
+            panelNav.Dock = DockStyle.Top;
+            panelNav.Location = new Point(0, 0);
+            panelNav.Name = "panelNav";
+            panelNav.Padding = new Padding(2);
+            panelNav.Size = new Size(900, 36);
+            panelNav.TabIndex = 2;
+            // 
+            // navLayout
+            // 
+            navLayout.ColumnCount = 2;
+            navLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            navLayout.ColumnStyles.Add(new ColumnStyle());
+            navLayout.Controls.Add(txtPath, 0, 0);
+            navLayout.Controls.Add(btnGo, 1, 0);
+            navLayout.Dock = DockStyle.Fill;
+            navLayout.GrowStyle = TableLayoutPanelGrowStyle.FixedSize;
+            navLayout.Location = new Point(2, 2);
+            navLayout.Name = "navLayout";
+            navLayout.RowCount = 1;
+            navLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            navLayout.Size = new Size(896, 32);
+            navLayout.TabIndex = 0;
+            // 
+            // txtPath
+            // 
+            txtPath.Dock = DockStyle.Fill;
+            txtPath.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            txtPath.Location = new Point(4, 4);
+            txtPath.Margin = new Padding(4, 4, 8, 4);
+            txtPath.Name = "txtPath";
+            txtPath.Size = new Size(838, 25);
+            txtPath.TabIndex = 0;
+            txtPath.Text = "D:\\dev\\tfs\\Manfred\\import\\common";
+            // 
+            // btnGo
+            // 
+            btnGo.Anchor = AnchorStyles.None;
+            btnGo.Location = new Point(853, 3);
+            btnGo.Name = "btnGo";
+            btnGo.Size = new Size(40, 26);
+            btnGo.TabIndex = 1;
+            btnGo.Text = "GO";
+            btnGo.Click += btnGo_Click;
+            // 
+            // mainSplit
+            // 
+            mainSplit.Dock = DockStyle.Fill;
+            mainSplit.Location = new Point(0, 76);
+            mainSplit.Name = "mainSplit";
+            // 
+            // mainSplit.Panel1
+            // 
+            mainSplit.Panel1.Controls.Add(tree);
+            mainSplit.Panel1MinSize = 100;
+            // 
+            // mainSplit.Panel2
+            // 
+            mainSplit.Panel2.Controls.Add(txtContent);
+            mainSplit.Panel2MinSize = 100;
+            mainSplit.Size = new Size(900, 524);
+            mainSplit.SplitterDistance = 276;
+            mainSplit.TabIndex = 0;
+            // 
+            // tree
+            // 
+            tree.Dock = DockStyle.Fill;
+            tree.HideSelection = false;
+            tree.Location = new Point(0, 0);
+            tree.Name = "tree";
+            tree.Size = new Size(276, 524);
+            tree.TabIndex = 0;
+            tree.AfterSelect += tree_AfterSelect;
+            // 
+            // txtContent
+            // 
+            txtContent.Dock = DockStyle.Fill;
+            txtContent.Location = new Point(0, 0);
+            txtContent.Multiline = true;
+            txtContent.Name = "txtContent";
+            txtContent.ScrollBars = ScrollBars.Both;
+            txtContent.Size = new Size(620, 524);
+            txtContent.TabIndex = 0;
+            // 
+            // Form1
+            // 
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(900, 600);
+            Controls.Add(mainSplit);
+            Controls.Add(actionPanel);
+            Controls.Add(panelNav);
+            MinimumSize = new Size(700, 400);
+            Name = "Form1";
+            Text = "Form1";
+            actionPanel.ResumeLayout(false);
+            panelNav.ResumeLayout(false);
+            navLayout.ResumeLayout(false);
+            navLayout.PerformLayout();
+            mainSplit.Panel1.ResumeLayout(false);
+            mainSplit.Panel2.ResumeLayout(false);
+            mainSplit.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)mainSplit).EndInit();
+            mainSplit.ResumeLayout(false);
+            ResumeLayout(false);
+        }
+
+        #endregion
+        private Panel actionPanel;
+        private Button btnImport;
+        private Button btnSaveContent;
+        private Panel panelNav;
+        private TableLayoutPanel navLayout;
+        private TextBox txtPath;
+        private Button btnGo;
+        private SplitContainer mainSplit;
+        private TreeView tree;
+        private TextBox txtContent;
+    }
+}
