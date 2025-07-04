@@ -178,11 +178,10 @@ namespace SnIoGui
             {
                 // Target értékek lekérése
                 var selectedTarget = cmbTargets.SelectedItem as Target;
-                string targetName = selectedTarget?.Name ?? string.Empty;
-                string targetUrl = selectedTarget?.Url ?? string.Empty;
                 string selectedPath = path;
-                // ImportForm modális megnyitása
-                using (var importForm = new ImportForm(targetName, targetUrl, selectedPath))
+                // ImportForm modális megnyitása, csak Target és selectedPath átadása
+                string snioExe = _settings?.SnIO ?? "SnIO.exe";
+                using (var importForm = new ImportForm(selectedTarget, selectedPath, snioExe))
                 {
                     importForm.ShowDialog(this);
                 }

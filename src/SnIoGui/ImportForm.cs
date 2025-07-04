@@ -37,19 +37,24 @@ namespace SnIoGui
             set => txtScript.Text = value;
         }
 
-        public ImportForm(string targetName, string targetUrl, string selectedPath)
+        private readonly Target _target;
+        private readonly string _snioExe;
+        public ImportForm(Target target, string selectedPath, string snioExe)
         {
             InitializeComponent();
             btnViewScript.Click += BtnViewScript_Click;
             btnExecuteScript.Click += BtnExecuteScript_Click;
-            TargetName = targetName;
-            TargetUrl = targetUrl;
+            _target = target;
+            _snioExe = snioExe;
+            TargetName = target?.Name ?? string.Empty;
+            TargetUrl = target?.Url ?? string.Empty;
             SelectedPath = selectedPath;
             // Calculate target path (e.g., only the part after "Root")
             var targetPath = CalculateTargetPath(selectedPath);
             txtTargetPath.Text = targetPath;
-            // Script generation in constructor, using the calculated targetPath
-            _generatedScript = GenerateScript(TargetName, TargetUrl, SelectedPath, targetPath);
+            // Script generation in constructor, using the calculated targetPath and apiKey
+            string apiKey = target?.ApiKey ?? string.Empty;
+            _generatedScript = GenerateScript(TargetName, TargetUrl, SelectedPath, targetPath, apiKey, _snioExe);
             btnCancel.Click += BtnCancel_Click;
 
             // Set CancelButton property so ESC triggers Cancel
@@ -85,8 +90,8 @@ namespace SnIoGui
 
         private void BtnViewScript_Click(object sender, EventArgs e)
         {
-            // A generált scriptet bemásolja a txtScript-be
-            txtScript.Text = _generatedScript;
+            // Set multiline text in txtScript, preserving line breaks
+            txtScript.Lines = _generatedScript.Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.None);
         }
         private void BtnExecuteScript_Click(object sender, EventArgs e)
         {
@@ -95,10 +100,24 @@ namespace SnIoGui
             this.Close();
         }
 
-        private string GenerateScript(string targetName, string targetUrl, string selectedPath, string targetPath)
+        private string GenerateScript(string targetName, string targetUrl, string selectedPath, string targetPath, string apiKey, string snioExe)
         {
-            // Customize script generation here
-            return $"# Import script for {targetName}\n$targetUrl = '{targetUrl}'\n$importPath = '{selectedPath}'\n$targetPath = '{targetPath}'\nWrite-Host \"Importing from $importPath to $targetUrl (target path: $targetPath)...\"\n# Add your import logic here";
+            // Script template with placeholders
+            const string template =
+                "$Exe = \"{SnIO}\"\n" +
+                "$Url = \"{TargetUrl}\"\n" +
+                "$ApiKey = \"{ApiKey}\"\n" +
+                "$Source = \"{SelectedPath}\"\n" +
+                "$Path = \"{TargetPath}\"\n\n" +
+                "& $Exe IMPORT --DISPLAY:LEVEL Verbose -SOURCE $Source -TARGET -URL $Url -PATH $Path -APIKEY $ApiKey";
+
+            string script = template
+                .Replace("{SnIO}", snioExe)
+                .Replace("{TargetUrl}", targetUrl)
+                .Replace("{ApiKey}", apiKey)
+                .Replace("{SelectedPath}", selectedPath)
+                .Replace("{TargetPath}", targetPath);
+            return script;
         }
     }
 }
