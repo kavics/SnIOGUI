@@ -176,7 +176,16 @@ namespace SnIoGui
         {
             if (tree.SelectedNode?.Tag is string path)
             {
-                MessageBox.Show(path, "Selected Path", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                // Target értékek lekérése
+                var selectedTarget = cmbTargets.SelectedItem as Target;
+                string targetName = selectedTarget?.Name ?? string.Empty;
+                string targetUrl = selectedTarget?.Url ?? string.Empty;
+                string selectedPath = path;
+                // ImportForm modális megnyitása
+                using (var importForm = new ImportForm(targetName, targetUrl, selectedPath))
+                {
+                    importForm.ShowDialog(this);
+                }
             }
             else
             {
