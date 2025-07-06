@@ -191,5 +191,49 @@ namespace SnIoGui
                 MessageBox.Show("No item selected.", "Import", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
+        private void btnOpenLog_Click(object sender, EventArgs e)
+        {
+            // Find latest log file in the running application's logs directory, with robust null-safety
+            string? exePath = null;
+            string? exeDir = null;
+            try
+            {
+                exePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+                exeDir = System.IO.Path.GetDirectoryName(exePath);
+            }
+            catch { }
+            if (string.IsNullOrEmpty(exeDir))
+            {
+                MessageBox.Show("Could not determine application directory.", "Log", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            string logsDir = System.IO.Path.Combine(exeDir, "logs");
+            if (!System.IO.Directory.Exists(logsDir))
+            {
+                MessageBox.Show("Logs directory not found.", "Log", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            var logFiles = System.IO.Directory.GetFiles(logsDir)
+                .OrderByDescending(f => System.IO.File.GetLastWriteTimeUtc(f))
+                .ToList();
+            if (logFiles.Count == 0)
+            {
+                MessageBox.Show("No log files found.", "Log", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+            string latestLog = logFiles.First();
+            // Open with default application using ProcessHelper
+            try
+            {
+                if (!ProcessHelper.OpenFileWithDefaultApp(latestLog))
+                {
+                    MessageBox.Show("Failed to open log file with the default application.", "Log", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to open log file:\n{ex.Message}", "Log", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
     }
 }

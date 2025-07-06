@@ -26,149 +26,162 @@ namespace SnIoGui
 
         private void InitializeComponent()
         {
-            this.lblTargetName = new Label();
-            this.lblTargetUrl = new Label();
-            this.lblSelectedPath = new Label();
-            this.txtTargetName = new TextBox();
-            this.txtTargetUrl = new TextBox();
-            this.txtSelectedPath = new TextBox();
-            this.btnViewScript = new Button();
-            this.txtScript = new TextBox();
-            this.btnExecuteScript = new Button();
-            this.SuspendLayout();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ImportForm));
+            lblTargetName = new Label();
+            lblTargetUrl = new Label();
+            lblSelectedPath = new Label();
+            txtTargetName = new TextBox();
+            txtTargetUrl = new TextBox();
+            txtSelectedPath = new TextBox();
+            btnViewScript = new Button();
+            txtScript = new TextBox();
+            btnExecuteScript = new Button();
+            lblTargetPath = new Label();
+            txtTargetPath = new TextBox();
+            btnCancel = new Button();
+            SuspendLayout();
             // 
             // lblTargetName
             // 
-            this.lblTargetName.AutoSize = true;
-            this.lblTargetName.Location = new System.Drawing.Point(8, 8);
-            this.lblTargetName.Name = "lblTargetName";
-            this.lblTargetName.Size = new System.Drawing.Size(77, 15);
-            this.lblTargetName.Text = "Profile name:";
-            // 
-            // txtTargetName
-            // 
-            this.txtTargetName.Location = new System.Drawing.Point(100, 5);
-            this.txtTargetName.Name = "txtTargetName";
-            this.txtTargetName.ReadOnly = true;
-            this.txtTargetName.Size = new System.Drawing.Size(550, 23);
-            this.txtTargetName.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            lblTargetName.AutoSize = true;
+            lblTargetName.Location = new Point(8, 8);
+            lblTargetName.Name = "lblTargetName";
+            lblTargetName.Size = new Size(77, 15);
+            lblTargetName.TabIndex = 0;
+            lblTargetName.Text = "Profile name:";
             // 
             // lblTargetUrl
             // 
-            this.lblTargetUrl.AutoSize = true;
-            this.lblTargetUrl.Location = new System.Drawing.Point(8, 38);
-            this.lblTargetUrl.Name = "lblTargetUrl";
-            this.lblTargetUrl.Size = new System.Drawing.Size(61, 15);
-            this.lblTargetUrl.Text = "Target url:";
-            // 
-            // txtTargetUrl
-            // 
-            this.txtTargetUrl.Location = new System.Drawing.Point(100, 35);
-            this.txtTargetUrl.Name = "txtTargetUrl";
-            this.txtTargetUrl.ReadOnly = true;
-            this.txtTargetUrl.Size = new System.Drawing.Size(550, 23);
-            this.txtTargetUrl.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            lblTargetUrl.AutoSize = true;
+            lblTargetUrl.Location = new Point(8, 38);
+            lblTargetUrl.Name = "lblTargetUrl";
+            lblTargetUrl.Size = new Size(59, 15);
+            lblTargetUrl.TabIndex = 2;
+            lblTargetUrl.Text = "Target url:";
             // 
             // lblSelectedPath
             // 
-            this.lblSelectedPath.AutoSize = true;
-            this.lblSelectedPath.Location = new System.Drawing.Point(8, 68);
-            this.lblSelectedPath.Name = "lblSelectedPath";
-            this.lblSelectedPath.Size = new System.Drawing.Size(80, 15);
-            this.lblSelectedPath.Text = "Selected path:";
+            lblSelectedPath.AutoSize = true;
+            lblSelectedPath.Location = new Point(8, 68);
+            lblSelectedPath.Name = "lblSelectedPath";
+            lblSelectedPath.Size = new Size(81, 15);
+            lblSelectedPath.TabIndex = 4;
+            lblSelectedPath.Text = "Selected path:";
+            // 
+            // txtTargetName
+            // 
+            txtTargetName.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtTargetName.Location = new Point(100, 5);
+            txtTargetName.Name = "txtTargetName";
+            txtTargetName.ReadOnly = true;
+            txtTargetName.Size = new Size(550, 23);
+            txtTargetName.TabIndex = 1;
+            // 
+            // txtTargetUrl
+            // 
+            txtTargetUrl.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtTargetUrl.Location = new Point(100, 35);
+            txtTargetUrl.Name = "txtTargetUrl";
+            txtTargetUrl.ReadOnly = true;
+            txtTargetUrl.Size = new Size(550, 23);
+            txtTargetUrl.TabIndex = 3;
             // 
             // txtSelectedPath
             // 
-            this.txtSelectedPath.Location = new System.Drawing.Point(100, 65);
-            this.txtSelectedPath.Name = "txtSelectedPath";
-            this.txtSelectedPath.ReadOnly = true;
-            this.txtSelectedPath.Size = new System.Drawing.Size(550, 23);
-            this.txtSelectedPath.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-
-            // lblTargetPath
-            // 
-            this.lblTargetPath = new Label();
-            this.lblTargetPath.AutoSize = true;
-            this.lblTargetPath.Location = new System.Drawing.Point(8, 98);
-            this.lblTargetPath.Name = "lblTargetPath";
-            this.lblTargetPath.Size = new System.Drawing.Size(70, 15);
-            this.lblTargetPath.Text = "Target path:";
-            // 
-            // txtTargetPath
-            // 
-            this.txtTargetPath = new TextBox();
-            this.txtTargetPath.Location = new System.Drawing.Point(100, 95);
-            this.txtTargetPath.Name = "txtTargetPath";
-            this.txtTargetPath.ReadOnly = true;
-            this.txtTargetPath.Size = new System.Drawing.Size(550, 23);
-            this.txtTargetPath.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtSelectedPath.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtSelectedPath.Location = new Point(100, 65);
+            txtSelectedPath.Name = "txtSelectedPath";
+            txtSelectedPath.ReadOnly = true;
+            txtSelectedPath.Size = new Size(550, 23);
+            txtSelectedPath.TabIndex = 5;
             // 
             // btnViewScript
             // 
-            this.btnViewScript.Location = new System.Drawing.Point(8, 125);
-            this.btnViewScript.Name = "btnViewScript";
-            this.btnViewScript.Size = new System.Drawing.Size(140, 40);
-            this.btnViewScript.Text = "View Script";
-            this.btnViewScript.UseVisualStyleBackColor = true;
+            btnViewScript.Location = new Point(8, 125);
+            btnViewScript.Name = "btnViewScript";
+            btnViewScript.Size = new Size(140, 40);
+            btnViewScript.TabIndex = 6;
+            btnViewScript.Text = "View Script";
+            btnViewScript.UseVisualStyleBackColor = true;
             // 
             // txtScript
             // 
-            this.txtScript.Location = new System.Drawing.Point(8, 175);
-            this.txtScript.Multiline = true;
-            this.txtScript.Name = "txtScript";
-            this.txtScript.ReadOnly = true;
-            this.txtScript.ScrollBars = ScrollBars.Both;
-            this.txtScript.Size = new System.Drawing.Size(770, 184);
-            this.txtScript.WordWrap = false;
-            this.txtScript.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            this.txtScript.Font = new System.Drawing.Font("Consolas", 10F);
-            this.txtScript.Text = string.Empty;
+            txtScript.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            txtScript.Font = new Font("Consolas", 10F);
+            txtScript.Location = new Point(8, 175);
+            txtScript.Multiline = true;
+            txtScript.Name = "txtScript";
+            txtScript.ReadOnly = true;
+            txtScript.ScrollBars = ScrollBars.Both;
+            txtScript.Size = new Size(770, 184);
+            txtScript.TabIndex = 7;
+            txtScript.WordWrap = false;
             // 
             // btnExecuteScript
             // 
-            this.btnExecuteScript.Location = new System.Drawing.Point(638, 370);
-            this.btnExecuteScript.Name = "btnExecuteScript";
-            this.btnExecuteScript.Size = new System.Drawing.Size(140, 40);
-            this.btnExecuteScript.Text = "Execute Script";
-            this.btnExecuteScript.UseVisualStyleBackColor = true;
-            this.btnExecuteScript.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            this.btnExecuteScript.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-
+            btnExecuteScript.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnExecuteScript.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            btnExecuteScript.Location = new Point(638, 370);
+            btnExecuteScript.Name = "btnExecuteScript";
+            btnExecuteScript.Size = new Size(140, 40);
+            btnExecuteScript.TabIndex = 8;
+            btnExecuteScript.Text = "Execute Script";
+            btnExecuteScript.UseVisualStyleBackColor = true;
+            // 
+            // lblTargetPath
+            // 
+            lblTargetPath.AutoSize = true;
+            lblTargetPath.Location = new Point(8, 98);
+            lblTargetPath.Name = "lblTargetPath";
+            lblTargetPath.Size = new Size(69, 15);
+            lblTargetPath.TabIndex = 9;
+            lblTargetPath.Text = "Target path:";
+            // 
+            // txtTargetPath
+            // 
+            txtTargetPath.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtTargetPath.Location = new Point(100, 95);
+            txtTargetPath.Name = "txtTargetPath";
+            txtTargetPath.ReadOnly = true;
+            txtTargetPath.Size = new Size(550, 23);
+            txtTargetPath.TabIndex = 10;
+            // 
             // btnCancel
             // 
-            this.btnCancel = new Button();
-            this.btnCancel.Location = new System.Drawing.Point(492, 370);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(140, 40);
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnCancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnCancel.Location = new Point(492, 370);
+            btnCancel.Name = "btnCancel";
+            btnCancel.Size = new Size(140, 40);
+            btnCancel.TabIndex = 11;
+            btnCancel.Text = "Cancel";
+            btnCancel.UseVisualStyleBackColor = true;
             // 
             // ImportForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 430);
-            this.Controls.Add(this.lblTargetName);
-            this.Controls.Add(this.txtTargetName);
-            this.Controls.Add(this.lblTargetUrl);
-            this.Controls.Add(this.txtTargetUrl);
-            this.Controls.Add(this.lblSelectedPath);
-            this.Controls.Add(this.txtSelectedPath);
-            this.Controls.Add(this.btnViewScript);
-            this.Controls.Add(this.txtScript);
-            this.Controls.Add(this.btnExecuteScript);
-            this.Controls.Add(this.lblTargetPath);
-            this.Controls.Add(this.txtTargetPath);
-            this.Controls.Add(this.btnCancel);
-            this.FormBorderStyle = FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "ImportForm";
-            this.StartPosition = FormStartPosition.CenterParent;
-            this.Text = "Import Script Preview";
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(800, 430);
+            Controls.Add(lblTargetName);
+            Controls.Add(txtTargetName);
+            Controls.Add(lblTargetUrl);
+            Controls.Add(txtTargetUrl);
+            Controls.Add(lblSelectedPath);
+            Controls.Add(txtSelectedPath);
+            Controls.Add(btnViewScript);
+            Controls.Add(txtScript);
+            Controls.Add(btnExecuteScript);
+            Controls.Add(lblTargetPath);
+            Controls.Add(txtTargetPath);
+            Controls.Add(btnCancel);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            Icon = (Icon)resources.GetObject("$this.Icon");
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "ImportForm";
+            StartPosition = FormStartPosition.CenterParent;
+            Text = "Import Script Preview";
+            ResumeLayout(false);
+            PerformLayout();
         }
     }
 }

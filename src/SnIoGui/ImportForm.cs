@@ -86,7 +86,7 @@ namespace SnIoGui
             return string.IsNullOrEmpty(targetPath) ? "/" : targetPath;
         }
 
-        private readonly string _generatedScript;
+        private string _generatedScript;
 
         private void BtnViewScript_Click(object sender, EventArgs e)
         {
@@ -95,9 +95,29 @@ namespace SnIoGui
         }
         private void BtnExecuteScript_Click(object sender, EventArgs e)
         {
-            // Egyelőre csak bezárja a formot
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+            try
+            {
+                // Save script to a temporary file
+                string tempScriptPath = System.IO.Path.GetTempFileName() + ".ps1";
+                System.IO.File.WriteAllText(tempScriptPath, _generatedScript);
+
+                // Start PowerShell so it closes after execution (no -NoExit)
+                bool started = ProcessHelper.RunPowerShellScriptFileInWindow(tempScriptPath, keepOpen: false);
+                if (started)
+                {
+                    MessageBox.Show("Script execution started in a new PowerShell window.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    this.DialogResult = DialogResult.OK;
+                    this.Close();
+                }
+                else
+                {
+                    MessageBox.Show("Failed to start PowerShell process.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred while starting PowerShell:\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private string GenerateScript(string targetName, string targetUrl, string selectedPath, string targetPath, string apiKey, string snioExe)
