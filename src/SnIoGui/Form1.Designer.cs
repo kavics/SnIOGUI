@@ -28,7 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             actionPanel = new Panel();
+            btnOpenLog = new Button();
             btnImport = new Button();
             btnSaveContent = new Button();
             panelNav = new Panel();
@@ -50,6 +52,7 @@
             // 
             // actionPanel
             // 
+            actionPanel.Controls.Add(btnOpenLog);
             actionPanel.Controls.Add(btnImport);
             actionPanel.Controls.Add(btnSaveContent);
             actionPanel.Dock = DockStyle.Top;
@@ -58,6 +61,17 @@
             actionPanel.Padding = new Padding(2);
             actionPanel.Size = new Size(900, 32);
             actionPanel.TabIndex = 1;
+            // 
+            // btnOpenLog
+            // 
+            btnOpenLog.Dock = DockStyle.Left;
+            btnOpenLog.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            btnOpenLog.Location = new Point(132, 2);
+            btnOpenLog.Name = "btnOpenLog";
+            btnOpenLog.Size = new Size(130, 28);
+            btnOpenLog.TabIndex = 1;
+            btnOpenLog.Text = "Open Log";
+            btnOpenLog.Click += btnOpenLog_Click;
             // 
             // btnImport
             // 
@@ -189,6 +203,7 @@
             Controls.Add(mainSplit);
             Controls.Add(actionPanel);
             Controls.Add(panelNav);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             MinimumSize = new Size(700, 400);
             Name = "Form1";
             Text = "Form1";
@@ -207,6 +222,7 @@
         #endregion
         private Panel actionPanel;
         private Button btnImport;
+        private Button btnOpenLog;
         private Button btnSaveContent;
         private Panel panelNav;
         private TableLayoutPanel navLayout;
