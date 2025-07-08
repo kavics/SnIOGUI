@@ -65,10 +65,9 @@
             // btnOpenLog
             // 
             btnOpenLog.Dock = DockStyle.Left;
-            btnOpenLog.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             btnOpenLog.Location = new Point(132, 2);
             btnOpenLog.Name = "btnOpenLog";
-            btnOpenLog.Size = new Size(130, 28);
+            btnOpenLog.Size = new Size(90, 28);
             btnOpenLog.TabIndex = 1;
             btnOpenLog.Text = "Open Log";
             btnOpenLog.Click += btnOpenLog_Click;
