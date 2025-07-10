@@ -7,7 +7,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>3ffc4eca-efea-406a-ac9b-287d104967f4</UserSecretsId>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <ApplicationIcon>gyeby.ico</ApplicationIcon>
   </PropertyGroup>
 
