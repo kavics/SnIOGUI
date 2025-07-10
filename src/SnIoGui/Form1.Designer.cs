@@ -30,6 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             actionPanel = new Panel();
+            btnReadApiKey = new Button();
             btnOpenLog = new Button();
             btnImport = new Button();
             btnSaveContent = new Button();
@@ -52,6 +53,7 @@
             // 
             // actionPanel
             // 
+            actionPanel.Controls.Add(btnReadApiKey);
             actionPanel.Controls.Add(btnOpenLog);
             actionPanel.Controls.Add(btnImport);
             actionPanel.Controls.Add(btnSaveContent);
@@ -61,6 +63,18 @@
             actionPanel.Padding = new Padding(2);
             actionPanel.Size = new Size(900, 32);
             actionPanel.TabIndex = 1;
+            // 
+            // btnReadApiKey
+            // 
+            btnReadApiKey.Dock = DockStyle.Left;
+            btnReadApiKey.Font = new Font("Segoe UI", 10F);
+            btnReadApiKey.Location = new Point(222, 2);
+            btnReadApiKey.Name = "btnReadApiKey";
+            btnReadApiKey.Size = new Size(120, 28);
+            btnReadApiKey.TabIndex = 2;
+            btnReadApiKey.Text = "Read ApiKey";
+            btnReadApiKey.UseVisualStyleBackColor = true;
+            btnReadApiKey.Click += btnReadApiKey_Click;
             // 
             // btnOpenLog
             // 
@@ -223,6 +237,7 @@
         private Button btnImport;
         private Button btnOpenLog;
         private Button btnSaveContent;
+        private Button btnReadApiKey;
         private Panel panelNav;
         private TableLayoutPanel navLayout;
         private ComboBox cmbTargets;

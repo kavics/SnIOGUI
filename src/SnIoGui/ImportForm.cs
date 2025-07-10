@@ -105,7 +105,6 @@ namespace SnIoGui
                 bool started = ProcessHelper.RunPowerShellScriptFileInWindow(tempScriptPath, keepOpen: false);
                 if (started)
                 {
-                    MessageBox.Show("Script execution started in a new PowerShell window.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     this.DialogResult = DialogResult.OK;
                     this.Close();
                 }
@@ -129,7 +128,9 @@ namespace SnIoGui
                 "$ApiKey = \"{ApiKey}\"\n" +
                 "$Source = \"{SelectedPath}\"\n" +
                 "$Path = \"{TargetPath}\"\n\n" +
-                "& $Exe IMPORT --DISPLAY:LEVEL Verbose -SOURCE $Source -TARGET -URL $Url -PATH $Path -APIKEY $ApiKey";
+                "& $Exe IMPORT --DISPLAY:LEVEL Verbose -SOURCE $Source -TARGET -URL $Url -PATH $Path -APIKEY $ApiKey\n" +
+                "Write-Host 'Press any key to close...'\n" +
+                "$null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')";
 
             string script = template
                 .Replace("{SnIO}", snioExe)

@@ -1,3 +1,5 @@
+using Microsoft.Data.SqlClient;
+using System.Windows.Forms;
 namespace SnIoGui
 {
     public partial class Form1 : Form
@@ -176,10 +178,10 @@ namespace SnIoGui
         {
             if (tree.SelectedNode?.Tag is string path)
             {
-                // Target értékek lekérése
+                // Get Target values
                 var selectedTarget = cmbTargets.SelectedItem as Target;
                 string selectedPath = path;
-                // ImportForm modális megnyitása, csak Target és selectedPath átadása
+                // Open ImportForm modally, passing only Target and selectedPath
                 string snioExe = _settings?.SnIO ?? "SnIO.exe";
                 using (var importForm = new ImportForm(selectedTarget, selectedPath, snioExe))
                 {
@@ -233,6 +235,60 @@ namespace SnIoGui
             catch (Exception ex)
             {
                 MessageBox.Show($"Failed to open log file:\n{ex.Message}", "Log", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        // Read ApiKey button event handler
+        private void btnReadApiKey_Click(object sender, EventArgs e)
+        {
+            // Connection string template
+            string connStrTemplate = "Data Source={0};Initial Catalog={1};Integrated Security=SSPI;Persist Security Info=False;TrustServerCertificate=True";
+            // Get from selected target
+            var selectedTarget = cmbTargets.SelectedItem as Target;
+            if (selectedTarget == null || string.IsNullOrWhiteSpace(selectedTarget.DbServer) || string.IsNullOrWhiteSpace(selectedTarget.DbName))
+            {
+                MessageBox.Show("The selected Target is not properly configured (DbServer/DbName).", "Read ApiKey", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            string connStr = string.Format(connStrTemplate, selectedTarget.DbServer, selectedTarget.DbName);
+
+            // SQL script to read ApiKey
+            string sql = @"SELECT TOP 1 [Value] FROM AccessTokens
+WHERE Feature = 'ApiKey' AND UserId = 1 AND
+    GETUTCDATE() > CreationDate AND GETUTCDATE() < ExpirationDate
+ORDER BY ExpirationDate DESC";
+            string? apiKey = null;
+            try
+            {
+                using (var conn = new SqlConnection(connStr))
+                using (var cmd = new SqlCommand(sql, conn))
+                {
+                    conn.Open();
+                    var result = cmd.ExecuteScalar();
+                    if (result != null && result != DBNull.Value)
+                        apiKey = result.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"SQL error: {ex.Message}", "Read ApiKey", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (!string.IsNullOrEmpty(apiKey))
+            {
+                try
+                {
+                    Clipboard.SetText(apiKey);
+                    MessageBox.Show("ApiKey copied to clipboard!", "Read ApiKey", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Clipboard error: {ex.Message}", "Read ApiKey", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("No ApiKey found.", "Read ApiKey", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
     }
