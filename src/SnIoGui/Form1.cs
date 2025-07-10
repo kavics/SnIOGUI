@@ -1,17 +1,20 @@
 using Microsoft.Data.SqlClient;
 using System.Windows.Forms;
+
 namespace SnIoGui
 {
     public partial class Form1 : Form
     {
         private readonly SnIoGuiSettings _settings;
+        private string? _lastLoadedFilePath;
+        private string? _lastLoadedFileContent;
 
         public Form1(Microsoft.Extensions.Options.IOptions<SnIoGuiSettings> options)
         {
             _settings = options.Value;
             InitializeComponent();
             var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-            this.Text = $"sensenet Importer V{version.Major}.{version.Minor}.{version.Build}";
+            this.Text = $"sensenet Importer V{version?.Major}.{version?.Minor}.{version?.Build}";
             if (_settings.Targets != null)
             {
                 var targetsWithEmpty = new List<Target> { new Target { Name = string.Empty } };
@@ -22,6 +25,28 @@ namespace SnIoGui
             }
             txtPath.Text = string.Empty;
             cmbTargets.SelectedIndexChanged += cmbTargets_SelectedIndexChanged;
+        }
+
+        private void btnOpenAdminUI_Click(object sender, EventArgs e)
+        {
+            var selectedTarget = cmbTargets.SelectedItem as Target;
+            if (selectedTarget == null || string.IsNullOrWhiteSpace(selectedTarget.AdminUrl))
+            {
+                MessageBox.Show("The selected Target does not have an AdminUrl configured.", "Open AdminUI", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            try
+            {
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = selectedTarget.AdminUrl,
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to open AdminUI:\n{ex.Message}", "Open AdminUI", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void cmbTargets_SelectedIndexChanged(object sender, EventArgs e)
@@ -49,8 +74,7 @@ namespace SnIoGui
         }
 
         // Show file or directory content in textarea when a node is selected
-        private string _lastLoadedFilePath = null;
-        private string _lastLoadedFileContent = null;
+        // (Removed duplicate _lastLoadedFilePath and _lastLoadedFileContent fields)
 
         private void tree_AfterSelect(object sender, TreeViewEventArgs e)
         {

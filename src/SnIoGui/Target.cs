@@ -11,5 +11,6 @@ namespace SnIoGui
         public string? ImportPath { get; set; }
         public string? DbServer { get; set; }
         public string? DbName { get; set; }
+        public string? AdminUrl { get; set; }
     }
 }

@@ -31,6 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             actionPanel = new Panel();
             btnReadApiKey = new Button();
+            btnOpenAdminUI = new Button();
             btnOpenLog = new Button();
             btnImport = new Button();
             btnSaveContent = new Button();
@@ -54,6 +55,7 @@
             // actionPanel
             // 
             actionPanel.Controls.Add(btnReadApiKey);
+            actionPanel.Controls.Add(btnOpenAdminUI);
             actionPanel.Controls.Add(btnOpenLog);
             actionPanel.Controls.Add(btnImport);
             actionPanel.Controls.Add(btnSaveContent);
@@ -67,14 +69,24 @@
             // btnReadApiKey
             // 
             btnReadApiKey.Dock = DockStyle.Left;
-            btnReadApiKey.Font = new Font("Segoe UI", 10F);
-            btnReadApiKey.Location = new Point(222, 2);
+            btnReadApiKey.Location = new Point(352, 2);
             btnReadApiKey.Name = "btnReadApiKey";
             btnReadApiKey.Size = new Size(120, 28);
             btnReadApiKey.TabIndex = 2;
             btnReadApiKey.Text = "Read ApiKey";
             btnReadApiKey.UseVisualStyleBackColor = true;
             btnReadApiKey.Click += btnReadApiKey_Click;
+            // 
+            // btnOpenAdminUI
+            // 
+            btnOpenAdminUI.Dock = DockStyle.Left;
+            btnOpenAdminUI.Location = new Point(222, 2);
+            btnOpenAdminUI.Name = "btnOpenAdminUI";
+            btnOpenAdminUI.Size = new Size(130, 28);
+            btnOpenAdminUI.TabIndex = 3;
+            btnOpenAdminUI.Text = "Open AdminUI";
+            btnOpenAdminUI.UseVisualStyleBackColor = true;
+            btnOpenAdminUI.Click += btnOpenAdminUI_Click;
             // 
             // btnOpenLog
             // 
@@ -238,6 +250,7 @@
         private Button btnOpenLog;
         private Button btnSaveContent;
         private Button btnReadApiKey;
+        private Button btnOpenAdminUI;
         private Panel panelNav;
         private TableLayoutPanel navLayout;
         private ComboBox cmbTargets;
