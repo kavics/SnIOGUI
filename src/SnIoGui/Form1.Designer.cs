@@ -28,11 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             actionPanel = new Panel();
             btnReadApiKey = new Button();
             btnOpenAdminUI = new Button();
             btnOpenLog = new Button();
+            btnSearch = new Button();
+            txtSearch = new TextBox();
+            btnCollapseAll = new Button();
             btnImport = new Button();
             btnSaveContent = new Button();
             panelNav = new Panel();
@@ -43,6 +47,7 @@
             mainSplit = new SplitContainer();
             tree = new TreeView();
             txtContent = new TextBox();
+            toolTip = new ToolTip(components);
             actionPanel.SuspendLayout();
             panelNav.SuspendLayout();
             navLayout.SuspendLayout();
@@ -57,6 +62,9 @@
             actionPanel.Controls.Add(btnReadApiKey);
             actionPanel.Controls.Add(btnOpenAdminUI);
             actionPanel.Controls.Add(btnOpenLog);
+            actionPanel.Controls.Add(btnSearch);
+            actionPanel.Controls.Add(txtSearch);
+            actionPanel.Controls.Add(btnCollapseAll);
             actionPanel.Controls.Add(btnImport);
             actionPanel.Controls.Add(btnSaveContent);
             actionPanel.Dock = DockStyle.Top;
@@ -69,9 +77,9 @@
             // btnReadApiKey
             // 
             btnReadApiKey.Dock = DockStyle.Left;
-            btnReadApiKey.Location = new Point(352, 2);
+            btnReadApiKey.Location = new Point(512, 2);
             btnReadApiKey.Name = "btnReadApiKey";
-            btnReadApiKey.Size = new Size(120, 28);
+            btnReadApiKey.Size = new Size(90, 28);
             btnReadApiKey.TabIndex = 2;
             btnReadApiKey.Text = "Read ApiKey";
             btnReadApiKey.UseVisualStyleBackColor = true;
@@ -80,9 +88,9 @@
             // btnOpenAdminUI
             // 
             btnOpenAdminUI.Dock = DockStyle.Left;
-            btnOpenAdminUI.Location = new Point(222, 2);
+            btnOpenAdminUI.Location = new Point(412, 2);
             btnOpenAdminUI.Name = "btnOpenAdminUI";
-            btnOpenAdminUI.Size = new Size(130, 28);
+            btnOpenAdminUI.Size = new Size(100, 28);
             btnOpenAdminUI.TabIndex = 3;
             btnOpenAdminUI.Text = "Open AdminUI";
             btnOpenAdminUI.UseVisualStyleBackColor = true;
@@ -91,12 +99,49 @@
             // btnOpenLog
             // 
             btnOpenLog.Dock = DockStyle.Left;
-            btnOpenLog.Location = new Point(132, 2);
+            btnOpenLog.Location = new Point(342, 2);
             btnOpenLog.Name = "btnOpenLog";
-            btnOpenLog.Size = new Size(90, 28);
+            btnOpenLog.Size = new Size(70, 28);
             btnOpenLog.TabIndex = 1;
             btnOpenLog.Text = "Open Log";
             btnOpenLog.Click += btnOpenLog_Click;
+            // 
+            // btnSearch
+            // 
+            btnSearch.Dock = DockStyle.Left;
+            btnSearch.Enabled = false;
+            btnSearch.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point, 238);
+            btnSearch.Location = new Point(302, 2);
+            btnSearch.Name = "btnSearch";
+            btnSearch.Size = new Size(40, 28);
+            btnSearch.TabIndex = 6;
+            btnSearch.Text = "🔍";
+            btnSearch.UseVisualStyleBackColor = true;
+            btnSearch.Click += btnSearch_Click;
+            // 
+            // txtSearch
+            // 
+            txtSearch.Dock = DockStyle.Left;
+            txtSearch.Enabled = false;
+            txtSearch.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 238);
+            txtSearch.Location = new Point(152, 2);
+            txtSearch.Name = "txtSearch";
+            txtSearch.PlaceholderText = "Search in files...";
+            txtSearch.Size = new Size(150, 25);
+            txtSearch.TabIndex = 5;
+            txtSearch.KeyDown += txtSearch_KeyDown;
+            // 
+            // btnCollapseAll
+            // 
+            btnCollapseAll.Dock = DockStyle.Left;
+            btnCollapseAll.Location = new Point(132, 2);
+            btnCollapseAll.Name = "btnCollapseAll";
+            btnCollapseAll.Size = new Size(20, 28);
+            btnCollapseAll.TabIndex = 4;
+            btnCollapseAll.Text = "^";
+            toolTip.SetToolTip(btnCollapseAll, "Collapse All");
+            btnCollapseAll.UseVisualStyleBackColor = true;
+            btnCollapseAll.Click += btnCollapseAll_Click;
             // 
             // btnImport
             // 
@@ -115,9 +160,9 @@
             btnSaveContent.Dock = DockStyle.Right;
             btnSaveContent.Enabled = false;
             btnSaveContent.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            btnSaveContent.Location = new Point(778, 2);
+            btnSaveContent.Location = new Point(788, 2);
             btnSaveContent.Name = "btnSaveContent";
-            btnSaveContent.Size = new Size(120, 28);
+            btnSaveContent.Size = new Size(110, 28);
             btnSaveContent.TabIndex = 1;
             btnSaveContent.Text = "Save Content";
             btnSaveContent.Click += btnSaveContent_Click;
@@ -212,6 +257,7 @@
             // txtContent
             // 
             txtContent.Dock = DockStyle.Fill;
+            txtContent.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 238);
             txtContent.Location = new Point(0, 0);
             txtContent.Multiline = true;
             txtContent.Name = "txtContent";
@@ -233,6 +279,7 @@
             Name = "Form1";
             Text = "Form1";
             actionPanel.ResumeLayout(false);
+            actionPanel.PerformLayout();
             panelNav.ResumeLayout(false);
             navLayout.ResumeLayout(false);
             navLayout.PerformLayout();
@@ -251,6 +298,9 @@
         private Button btnSaveContent;
         private Button btnReadApiKey;
         private Button btnOpenAdminUI;
+        private Button btnCollapseAll;
+        private TextBox txtSearch;
+        private Button btnSearch;
         private Panel panelNav;
         private TableLayoutPanel navLayout;
         private ComboBox cmbTargets;
@@ -259,5 +309,6 @@
         private SplitContainer mainSplit;
         private TreeView tree;
         private TextBox txtContent;
+        private ToolTip toolTip;
     }
 }

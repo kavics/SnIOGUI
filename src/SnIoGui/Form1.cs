@@ -17,7 +17,7 @@ namespace SnIoGui
             this.Text = $"sensenet Importer V{version?.Major}.{version?.Minor}.{version?.Build}";
             if (_settings.Targets != null)
             {
-                var targetsWithEmpty = new List<Target> { new Target { Name = string.Empty } };
+                var targetsWithEmpty = new List<Target> { new Target { Name = "Select a target..." } };
                 targetsWithEmpty.AddRange(_settings.Targets);
                 cmbTargets.DataSource = targetsWithEmpty;
                 cmbTargets.DisplayMember = "Name";
@@ -25,6 +25,7 @@ namespace SnIoGui
             }
             txtPath.Text = string.Empty;
             cmbTargets.SelectedIndexChanged += cmbTargets_SelectedIndexChanged;
+            UpdateSearchControls();
         }
 
         private void btnOpenAdminUI_Click(object sender, EventArgs e)
@@ -61,6 +62,8 @@ namespace SnIoGui
                 if (selectedTarget != null && !string.IsNullOrEmpty(selectedTarget.ImportPath))
                 {
                     txtPath.Text = selectedTarget.ImportPath;
+                    // Automatically trigger btnGo_Click when a valid path is set
+                    btnGo_Click(sender, e);
                 }
                 else
                 {
@@ -71,6 +74,7 @@ namespace SnIoGui
             {
                 txtPath.Text = string.Empty;
             }
+            UpdateSearchControls();
         }
 
         // Show file or directory content in textarea when a node is selected
@@ -137,6 +141,86 @@ namespace SnIoGui
             }
         }
 
+        private void btnCollapseAll_Click(object sender, EventArgs e)
+        {
+            tree.CollapseAll();
+        }
+
+        private void txtSearch_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                btnSearch_Click(sender, e);
+                e.Handled = true;
+            }
+        }
+
+        private void btnSearch_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(txtSearch.Text))
+                return;
+
+            try
+            {
+                var searchPattern = txtSearch.Text;
+                var regex = new System.Text.RegularExpressions.Regex(searchPattern, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                var foundNodes = new List<TreeNode>();
+
+                // Search through all nodes recursively
+                SearchNodes(tree.Nodes, regex, foundNodes);
+
+                if (foundNodes.Count > 0)
+                {
+                    // Expand path to all found nodes and select the first one
+                    foreach (var node in foundNodes)
+                    {
+                        ExpandToNode(node);
+                    }
+                    tree.SelectedNode = foundNodes[0];
+                    foundNodes[0].EnsureVisible();
+                    tree.Focus(); // Set focus to the TreeView
+                }
+                else
+                {
+                    MessageBox.Show($"No files found matching pattern: {searchPattern}", "Search", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (ArgumentException ex)
+            {
+                MessageBox.Show($"Invalid regex pattern: {ex.Message}", "Search Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void SearchNodes(TreeNodeCollection nodes, System.Text.RegularExpressions.Regex regex, List<TreeNode> foundNodes)
+        {
+            foreach (TreeNode node in nodes)
+            {
+                if (regex.IsMatch(node.Text))
+                {
+                    foundNodes.Add(node);
+                }
+                // Recursively search child nodes
+                SearchNodes(node.Nodes, regex, foundNodes);
+            }
+        }
+
+        private void ExpandToNode(TreeNode node)
+        {
+            var parent = node.Parent;
+            while (parent != null)
+            {
+                parent.Expand();
+                parent = parent.Parent;
+            }
+        }
+
+        private void UpdateSearchControls()
+        {
+            bool hasNodes = tree.Nodes.Count > 0;
+            txtSearch.Enabled = hasNodes;
+            btnSearch.Enabled = hasNodes;
+        }
+
         private void btnGo_Click(object sender, EventArgs e)
         {
             tree.Nodes.Clear();
@@ -158,6 +242,7 @@ namespace SnIoGui
                     tree.Nodes.Add(fileNode);
                 }
             }
+            UpdateSearchControls();
         }
         private void AddDirectoryNodes(TreeNode parentNode, string path)
         {
