@@ -1,6 +1,6 @@
 ﻿namespace SnIoGui
 {
-    partial class Form1
+    partial class Form2
     {
         /// <summary>
         ///  Required designer variable.
@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form2));
             actionPanel = new Panel();
             btnReadApiKey = new Button();
             btnOpenAdminUI = new Button();
@@ -37,12 +37,12 @@
             btnSearch = new Button();
             txtSearch = new TextBox();
             btnCollapseAll = new Button();
-            btnImport = new Button();
+            btnExport = new Button();
             btnSaveContent = new Button();
             panelNav = new Panel();
             navLayout = new TableLayoutPanel();
             cmbTargets = new ComboBox();
-            btnSwitchToExport = new Button();
+            btnSwitchToImport = new Button();
             txtPath = new TextBox();
             btnGo = new Button();
             mainSplit = new SplitContainer();
@@ -66,7 +66,7 @@
             actionPanel.Controls.Add(btnSearch);
             actionPanel.Controls.Add(txtSearch);
             actionPanel.Controls.Add(btnCollapseAll);
-            actionPanel.Controls.Add(btnImport);
+            actionPanel.Controls.Add(btnExport);
             actionPanel.Controls.Add(btnSaveContent);
             actionPanel.Dock = DockStyle.Top;
             actionPanel.Location = new Point(0, 36);
@@ -152,17 +152,17 @@
             btnCollapseAll.UseVisualStyleBackColor = true;
             btnCollapseAll.Click += btnCollapseAll_Click;
             // 
-            // btnImport
+            // btnExport
             // 
-            btnImport.Dock = DockStyle.Left;
-            btnImport.Enabled = false;
-            btnImport.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            btnImport.Location = new Point(2, 2);
-            btnImport.Name = "btnImport";
-            btnImport.Size = new Size(130, 28);
-            btnImport.TabIndex = 0;
-            btnImport.Text = "Import Selected";
-            btnImport.Click += btnImport_Click;
+            btnExport.Dock = DockStyle.Left;
+            btnExport.Enabled = false;
+            btnExport.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            btnExport.Location = new Point(2, 2);
+            btnExport.Name = "btnExport";
+            btnExport.Size = new Size(130, 28);
+            btnExport.TabIndex = 0;
+            btnExport.Text = "Export Selected";
+            btnExport.Click += btnExport_Click;
             // 
             // btnSaveContent
             // 
@@ -195,7 +195,7 @@
             navLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             navLayout.ColumnStyles.Add(new ColumnStyle());
             navLayout.Controls.Add(cmbTargets, 0, 0);
-            navLayout.Controls.Add(btnSwitchToExport, 1, 0);
+            navLayout.Controls.Add(btnSwitchToImport, 1, 0);
             navLayout.Controls.Add(txtPath, 2, 0);
             navLayout.Controls.Add(btnGo, 3, 0);
             navLayout.Dock = DockStyle.Fill;
@@ -217,16 +217,16 @@
             cmbTargets.Size = new Size(200, 25);
             cmbTargets.TabIndex = 0;
             // 
-            // btnSwitchToExport
+            // btnSwitchToImport
             // 
-            btnSwitchToExport.Anchor = AnchorStyles.None;
-            btnSwitchToExport.Location = new Point(209, 3);
-            btnSwitchToExport.Name = "btnSwitchToExport";
-            btnSwitchToExport.Size = new Size(110, 26);
-            btnSwitchToExport.TabIndex = 1;
-            btnSwitchToExport.Text = "Switch to Export";
-            btnSwitchToExport.UseVisualStyleBackColor = true;
-            btnSwitchToExport.Click += btnSwitchToExport_Click;
+            btnSwitchToImport.Anchor = AnchorStyles.None;
+            btnSwitchToImport.Location = new Point(209, 3);
+            btnSwitchToImport.Name = "btnSwitchToImport";
+            btnSwitchToImport.Size = new Size(110, 26);
+            btnSwitchToImport.TabIndex = 1;
+            btnSwitchToImport.Text = "Switch to Import";
+            btnSwitchToImport.UseVisualStyleBackColor = true;
+            btnSwitchToImport.Click += btnSwitchToImport_Click;
             // 
             // txtPath
             // 
@@ -290,7 +290,7 @@
             txtContent.TabIndex = 0;
             txtContent.TextChanged += txtContent_TextChanged;
             // 
-            // Form1
+            // Form2
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -300,8 +300,8 @@
             Controls.Add(panelNav);
             Icon = (Icon)resources.GetObject("$this.Icon");
             MinimumSize = new Size(700, 400);
-            Name = "Form1";
-            Text = "Form1";
+            Name = "Form2";
+            Text = "Form2";
             actionPanel.ResumeLayout(false);
             actionPanel.PerformLayout();
             panelNav.ResumeLayout(false);
@@ -317,8 +317,8 @@
 
         #endregion
         private Panel actionPanel;
-        private Button btnImport;
-        private Button btnSwitchToExport;
+        private Button btnExport;
+        private Button btnSwitchToImport;
         private Button btnOpenLog;
         private Button btnSaveContent;
         private Button btnReadApiKey;
