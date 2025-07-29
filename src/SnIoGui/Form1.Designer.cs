@@ -42,6 +42,7 @@
             panelNav = new Panel();
             navLayout = new TableLayoutPanel();
             cmbTargets = new ComboBox();
+            btnExport = new Button();
             txtPath = new TextBox();
             btnGo = new Button();
             mainSplit = new SplitContainer();
@@ -188,13 +189,15 @@
             // 
             // navLayout
             // 
-            navLayout.ColumnCount = 3;
+            navLayout.ColumnCount = 4;
+            navLayout.ColumnStyles.Add(new ColumnStyle());
             navLayout.ColumnStyles.Add(new ColumnStyle());
             navLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             navLayout.ColumnStyles.Add(new ColumnStyle());
             navLayout.Controls.Add(cmbTargets, 0, 0);
-            navLayout.Controls.Add(txtPath, 1, 0);
-            navLayout.Controls.Add(btnGo, 2, 0);
+            navLayout.Controls.Add(btnExport, 1, 0);
+            navLayout.Controls.Add(txtPath, 2, 0);
+            navLayout.Controls.Add(btnGo, 3, 0);
             navLayout.Dock = DockStyle.Fill;
             navLayout.GrowStyle = TableLayoutPanelGrowStyle.FixedSize;
             navLayout.Location = new Point(2, 2);
@@ -214,23 +217,35 @@
             cmbTargets.Size = new Size(200, 25);
             cmbTargets.TabIndex = 0;
             // 
+            // btnExport
+            // 
+            btnExport.Anchor = AnchorStyles.None;
+            btnExport.Location = new Point(209, 3);
+            btnExport.Name = "btnExport";
+            btnExport.Size = new Size(101, 26);
+            btnExport.TabIndex = 1;
+            btnExport.Text = "Switch to Export";
+            btnExport.UseVisualStyleBackColor = true;
+            btnExport.Click += btnExport_Click;
+            // 
             // txtPath
             // 
             txtPath.Dock = DockStyle.Fill;
             txtPath.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            txtPath.Location = new Point(210, 4);
+            txtPath.Location = new Point(317, 4);
             txtPath.Margin = new Padding(4, 4, 8, 4);
+            txtPath.MaxLength = 1000;
             txtPath.Name = "txtPath";
-            txtPath.Size = new Size(632, 25);
-            txtPath.TabIndex = 0;
+            txtPath.Size = new Size(445, 25);
+            txtPath.TabIndex = 2;
             // 
             // btnGo
             // 
             btnGo.Anchor = AnchorStyles.None;
-            btnGo.Location = new Point(853, 3);
+            btnGo.Location = new Point(773, 3);
             btnGo.Name = "btnGo";
-            btnGo.Size = new Size(40, 26);
-            btnGo.TabIndex = 1;
+            btnGo.Size = new Size(120, 26);
+            btnGo.TabIndex = 3;
             btnGo.Text = "GO";
             btnGo.Click += btnGo_Click;
             // 
@@ -303,6 +318,7 @@
         #endregion
         private Panel actionPanel;
         private Button btnImport;
+        private Button btnExport;
         private Button btnOpenLog;
         private Button btnSaveContent;
         private Button btnReadApiKey;

@@ -302,6 +302,19 @@ namespace SnIoGui
                 MessageBox.Show("No item selected.", "Import", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
+
+        private void btnExport_Click(object sender, EventArgs e)
+        {
+            if (tree.SelectedNode?.Tag is string path)
+            {
+                MessageBox.Show($"Export functionality will be implemented for:\n{path}", "Export", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                MessageBox.Show("No item selected.", "Export", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
         private void btnOpenLog_Click(object sender, EventArgs e)
         {
             // Find latest log file in the running application's logs directory, with robust null-safety
