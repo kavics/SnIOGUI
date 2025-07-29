@@ -303,7 +303,7 @@ namespace SnIoGui
             }
         }
 
-        private void btnExport_Click(object sender, EventArgs e)
+        private void btnSwitchToExport_Click(object sender, EventArgs e)
         {
             if (tree.SelectedNode?.Tag is string path)
             {
