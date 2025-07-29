@@ -77,33 +77,39 @@
             // btnReadApiKey
             // 
             btnReadApiKey.Dock = DockStyle.Left;
-            btnReadApiKey.Location = new Point(512, 2);
+            btnReadApiKey.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point, 238);
+            btnReadApiKey.Location = new Point(442, 2);
             btnReadApiKey.Name = "btnReadApiKey";
-            btnReadApiKey.Size = new Size(90, 28);
+            btnReadApiKey.Size = new Size(40, 28);
             btnReadApiKey.TabIndex = 2;
-            btnReadApiKey.Text = "Read ApiKey";
+            btnReadApiKey.Text = "🔑";
+            toolTip.SetToolTip(btnReadApiKey, "Read ApiKey");
             btnReadApiKey.UseVisualStyleBackColor = true;
             btnReadApiKey.Click += btnReadApiKey_Click;
             // 
             // btnOpenAdminUI
             // 
             btnOpenAdminUI.Dock = DockStyle.Left;
-            btnOpenAdminUI.Location = new Point(412, 2);
+            btnOpenAdminUI.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point, 238);
+            btnOpenAdminUI.Location = new Point(402, 2);
             btnOpenAdminUI.Name = "btnOpenAdminUI";
-            btnOpenAdminUI.Size = new Size(100, 28);
+            btnOpenAdminUI.Size = new Size(40, 28);
             btnOpenAdminUI.TabIndex = 3;
-            btnOpenAdminUI.Text = "Open AdminUI";
+            btnOpenAdminUI.Text = "🌐";
+            toolTip.SetToolTip(btnOpenAdminUI, "Open AdminUI");
             btnOpenAdminUI.UseVisualStyleBackColor = true;
             btnOpenAdminUI.Click += btnOpenAdminUI_Click;
             // 
             // btnOpenLog
             // 
             btnOpenLog.Dock = DockStyle.Left;
-            btnOpenLog.Location = new Point(342, 2);
+            btnOpenLog.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point, 238);
+            btnOpenLog.Location = new Point(362, 2);
             btnOpenLog.Name = "btnOpenLog";
-            btnOpenLog.Size = new Size(70, 28);
+            btnOpenLog.Size = new Size(40, 28);
             btnOpenLog.TabIndex = 1;
-            btnOpenLog.Text = "Open Log";
+            btnOpenLog.Text = "📄";
+            toolTip.SetToolTip(btnOpenLog, "Open Log");
             btnOpenLog.Click += btnOpenLog_Click;
             // 
             // btnSearch
@@ -111,11 +117,12 @@
             btnSearch.Dock = DockStyle.Left;
             btnSearch.Enabled = false;
             btnSearch.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point, 238);
-            btnSearch.Location = new Point(302, 2);
+            btnSearch.Location = new Point(322, 2);
             btnSearch.Name = "btnSearch";
             btnSearch.Size = new Size(40, 28);
             btnSearch.TabIndex = 6;
             btnSearch.Text = "🔍";
+            toolTip.SetToolTip(btnSearch, "Search");
             btnSearch.UseVisualStyleBackColor = true;
             btnSearch.Click += btnSearch_Click;
             // 
@@ -124,7 +131,7 @@
             txtSearch.Dock = DockStyle.Left;
             txtSearch.Enabled = false;
             txtSearch.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 238);
-            txtSearch.Location = new Point(152, 2);
+            txtSearch.Location = new Point(172, 2);
             txtSearch.Name = "txtSearch";
             txtSearch.PlaceholderText = "Search in files...";
             txtSearch.Size = new Size(150, 25);
@@ -134,11 +141,12 @@
             // btnCollapseAll
             // 
             btnCollapseAll.Dock = DockStyle.Left;
+            btnCollapseAll.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point, 238);
             btnCollapseAll.Location = new Point(132, 2);
             btnCollapseAll.Name = "btnCollapseAll";
-            btnCollapseAll.Size = new Size(20, 28);
+            btnCollapseAll.Size = new Size(40, 28);
             btnCollapseAll.TabIndex = 4;
-            btnCollapseAll.Text = "^";
+            btnCollapseAll.Text = "⏶";
             toolTip.SetToolTip(btnCollapseAll, "Collapse All");
             btnCollapseAll.UseVisualStyleBackColor = true;
             btnCollapseAll.Click += btnCollapseAll_Click;
@@ -159,12 +167,13 @@
             // 
             btnSaveContent.Dock = DockStyle.Right;
             btnSaveContent.Enabled = false;
-            btnSaveContent.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            btnSaveContent.Location = new Point(788, 2);
+            btnSaveContent.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            btnSaveContent.Location = new Point(858, 2);
             btnSaveContent.Name = "btnSaveContent";
-            btnSaveContent.Size = new Size(110, 28);
+            btnSaveContent.Size = new Size(40, 28);
             btnSaveContent.TabIndex = 1;
-            btnSaveContent.Text = "Save Content";
+            btnSaveContent.Text = "💾";
+            toolTip.SetToolTip(btnSaveContent, "Save Content");
             btnSaveContent.Click += btnSaveContent_Click;
             // 
             // panelNav
@@ -241,7 +250,7 @@
             mainSplit.Panel2.Controls.Add(txtContent);
             mainSplit.Panel2MinSize = 100;
             mainSplit.Size = new Size(900, 532);
-            mainSplit.SplitterDistance = 276;
+            mainSplit.SplitterDistance = 246;
             mainSplit.TabIndex = 0;
             // 
             // tree
@@ -250,7 +259,7 @@
             tree.HideSelection = false;
             tree.Location = new Point(0, 0);
             tree.Name = "tree";
-            tree.Size = new Size(276, 532);
+            tree.Size = new Size(246, 532);
             tree.TabIndex = 0;
             tree.AfterSelect += tree_AfterSelect;
             // 
@@ -262,7 +271,7 @@
             txtContent.Multiline = true;
             txtContent.Name = "txtContent";
             txtContent.ScrollBars = ScrollBars.Both;
-            txtContent.Size = new Size(620, 532);
+            txtContent.Size = new Size(650, 532);
             txtContent.TabIndex = 0;
             txtContent.TextChanged += txtContent_TextChanged;
             // 
