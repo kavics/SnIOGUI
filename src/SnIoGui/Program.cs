@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using SnIoGui.Services;
 using System;
 using System.Windows.Forms;
 
@@ -23,6 +24,11 @@ namespace SnIoGui
             var services = new ServiceCollection();
             services.AddSingleton<IConfiguration>(configuration);
             services.Configure<SnIoGuiSettings>(configuration.GetSection("SnIoGuiSettings"));
+            
+            // Register HttpClient and health service
+            services.AddSingleton<HttpClient>();
+            services.AddScoped<IHealthService, HealthService>();
+            
             services.AddSingleton<Form1>();
             services.AddSingleton<Form2>();
             ServiceProvider = services.BuildServiceProvider();

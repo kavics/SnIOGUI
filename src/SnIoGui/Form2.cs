@@ -1,5 +1,6 @@
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.DependencyInjection;
+using SnIoGui.Services;
 using System.Windows.Forms;
 
 namespace SnIoGui
@@ -414,7 +415,7 @@ ORDER BY ExpirationDate DESC";
             }
         }
 
-        private void btnHealth_Click(object sender, EventArgs e)
+        private async void btnHealth_Click(object sender, EventArgs e)
         {
             var selectedTarget = cmbTargets.SelectedItem as Target;
             if (selectedTarget == null || string.IsNullOrWhiteSpace(selectedTarget.Name) || selectedTarget.Name == "Select a target...")
@@ -423,15 +424,28 @@ ORDER BY ExpirationDate DESC";
                 return;
             }
 
-            // Demo implementation - showing target info
-            string healthInfo = $"Health Check for Target: {selectedTarget.Name}\n\n";
-            healthInfo += $"URL: {selectedTarget.Url ?? "Not configured"}\n";
-            healthInfo += $"Import Path: {selectedTarget.ImportPath ?? "Not configured"}\n";
-            healthInfo += $"Database: {selectedTarget.DbServer ?? "Not configured"}/{selectedTarget.DbName ?? "Not configured"}\n";
-            healthInfo += $"Admin URL: {selectedTarget.AdminUrl ?? "Not configured"}\n\n";
-            healthInfo += "Health check functionality will be implemented here.";
+            // Disable the button during health check
+            btnHealth.Enabled = false;
+            btnHealth.Text = "⏳";
 
-            MessageBox.Show(healthInfo, "Health Check", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            try
+            {
+                // Show health form - it will handle all health checks internally
+                using (var healthForm = new HealthResultForm(selectedTarget))
+                {
+                    healthForm.ShowDialog(this);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Health check failed:\n{ex.Message}", "Health Check Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                // Re-enable the button and return to default thermometer icon
+                btnHealth.Enabled = true;
+                btnHealth.Text = "🌡️";
+            }
         }
     }
 }

@@ -228,7 +228,7 @@
             btnHealth.Name = "btnHealth";
             btnHealth.Size = new Size(40, 26);
             btnHealth.TabIndex = 1;
-            btnHealth.Text = "💚";
+            btnHealth.Text = "🌡️";
             toolTip.SetToolTip(btnHealth, "Health Check");
             btnHealth.UseVisualStyleBackColor = true;
             btnHealth.Click += btnHealth_Click;
