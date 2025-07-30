@@ -1,4 +1,5 @@
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.DependencyInjection;
 using System.Windows.Forms;
 
 namespace SnIoGui
@@ -26,6 +27,13 @@ namespace SnIoGui
             txtPath.Text = string.Empty;
             cmbTargets.SelectedIndexChanged += cmbTargets_SelectedIndexChanged;
             UpdateSearchControls();
+            
+            // When Form2 is closed, show Form1 again
+            this.FormClosed += (s, e) => {
+                var form1 = Program.ServiceProvider.GetRequiredService<Form1>();
+                if (!form1.Visible)
+                    form1.Show();
+            };
         }
 
         private void btnOpenAdminUI_Click(object sender, EventArgs e)
@@ -92,7 +100,7 @@ namespace SnIoGui
             {
                 if (System.IO.Directory.Exists(path))
                 {
-                    // Enable import only if path contains a segment named "Root"
+                    // Enable export only if path contains a segment named "Root"
                     btnExport.Enabled = path.Split(System.IO.Path.DirectorySeparatorChar)
                         .Any(segment => string.Equals(segment, "Root", StringComparison.OrdinalIgnoreCase));
                     try
@@ -290,29 +298,21 @@ namespace SnIoGui
                 // Get Target values
                 var selectedTarget = cmbTargets.SelectedItem as Target;
                 string selectedPath = path;
-                // Open ImportForm modally, passing only Target and selectedPath
-                string snioExe = _settings?.SnIO ?? "SnIO.exe";
-                using (var importForm = new ImportForm(selectedTarget, selectedPath, snioExe))
-                {
-                    importForm.ShowDialog(this);
-                }
-            }
-            else
-            {
-                MessageBox.Show("No item selected.", "Import", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-        }
-
-        private void btnSwitchToImport_Click(object sender, EventArgs e)
-        {
-            if (tree.SelectedNode?.Tag is string path)
-            {
-                MessageBox.Show($"Export functionality will be implemented for:\n{path}", "Export", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                // TODO: Implement export functionality
+                MessageBox.Show($"Export functionality will be implemented for:\nTarget: {selectedTarget?.Name}\nPath: {selectedPath}", "Export", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
                 MessageBox.Show("No item selected.", "Export", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
+        }
+
+        private void btnSwitchToImport_Click(object sender, EventArgs e)
+        {
+            // Get Form1 singleton instance and show it, then hide Form2
+            var form1 = Program.ServiceProvider.GetRequiredService<Form1>();
+            this.Hide();
+            form1.Show();
         }
 
         private void btnOpenLog_Click(object sender, EventArgs e)

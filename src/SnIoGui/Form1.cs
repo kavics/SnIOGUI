@@ -1,4 +1,5 @@
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.DependencyInjection;
 using System.Windows.Forms;
 
 namespace SnIoGui
@@ -26,6 +27,9 @@ namespace SnIoGui
             txtPath.Text = string.Empty;
             cmbTargets.SelectedIndexChanged += cmbTargets_SelectedIndexChanged;
             UpdateSearchControls();
+            
+            // Handle proper application termination when Form1 is closed
+            this.FormClosed += (s, e) => Application.Exit();
         }
 
         private void btnOpenAdminUI_Click(object sender, EventArgs e)
@@ -305,14 +309,10 @@ namespace SnIoGui
 
         private void btnSwitchToExport_Click(object sender, EventArgs e)
         {
-            if (tree.SelectedNode?.Tag is string path)
-            {
-                MessageBox.Show($"Export functionality will be implemented for:\n{path}", "Export", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            else
-            {
-                MessageBox.Show("No item selected.", "Export", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
+            // Get Form2 singleton instance and show it, then hide Form1
+            var form2 = Program.ServiceProvider.GetRequiredService<Form2>();
+            this.Hide();
+            form2.Show();
         }
 
         private void btnOpenLog_Click(object sender, EventArgs e)

@@ -222,7 +222,7 @@
             btnSwitchToExport.Anchor = AnchorStyles.None;
             btnSwitchToExport.Location = new Point(209, 3);
             btnSwitchToExport.Name = "btnSwitchToExport";
-            btnSwitchToExport.Size = new Size(110, 26);
+            btnSwitchToExport.Size = new Size(101, 26);
             btnSwitchToExport.TabIndex = 1;
             btnSwitchToExport.Text = "Switch to Export";
             btnSwitchToExport.UseVisualStyleBackColor = true;
@@ -232,11 +232,11 @@
             // 
             txtPath.Dock = DockStyle.Fill;
             txtPath.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            txtPath.Location = new Point(326, 4);
+            txtPath.Location = new Point(317, 4);
             txtPath.Margin = new Padding(4, 4, 8, 4);
             txtPath.MaxLength = 1000;
             txtPath.Name = "txtPath";
-            txtPath.Size = new Size(512, 25);
+            txtPath.Size = new Size(521, 25);
             txtPath.TabIndex = 2;
             // 
             // btnGo

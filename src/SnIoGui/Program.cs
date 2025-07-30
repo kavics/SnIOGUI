@@ -24,6 +24,7 @@ namespace SnIoGui
             services.AddSingleton<IConfiguration>(configuration);
             services.Configure<SnIoGuiSettings>(configuration.GetSection("SnIoGuiSettings"));
             services.AddSingleton<Form1>();
+            services.AddSingleton<Form2>();
             ServiceProvider = services.BuildServiceProvider();
 
             ApplicationConfiguration.Initialize();
