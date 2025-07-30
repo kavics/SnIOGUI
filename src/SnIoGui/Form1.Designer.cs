@@ -42,6 +42,7 @@
             panelNav = new Panel();
             navLayout = new TableLayoutPanel();
             cmbTargets = new ComboBox();
+            btnHealth = new Button();
             btnSwitchToExport = new Button();
             txtPath = new TextBox();
             btnGo = new Button();
@@ -189,15 +190,17 @@
             // 
             // navLayout
             // 
-            navLayout.ColumnCount = 4;
+            navLayout.ColumnCount = 5;
+            navLayout.ColumnStyles.Add(new ColumnStyle());
             navLayout.ColumnStyles.Add(new ColumnStyle());
             navLayout.ColumnStyles.Add(new ColumnStyle());
             navLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             navLayout.ColumnStyles.Add(new ColumnStyle());
             navLayout.Controls.Add(cmbTargets, 0, 0);
-            navLayout.Controls.Add(btnSwitchToExport, 1, 0);
-            navLayout.Controls.Add(txtPath, 2, 0);
-            navLayout.Controls.Add(btnGo, 3, 0);
+            navLayout.Controls.Add(btnHealth, 1, 0);
+            navLayout.Controls.Add(btnSwitchToExport, 2, 0);
+            navLayout.Controls.Add(txtPath, 3, 0);
+            navLayout.Controls.Add(btnGo, 4, 0);
             navLayout.Dock = DockStyle.Fill;
             navLayout.GrowStyle = TableLayoutPanelGrowStyle.FixedSize;
             navLayout.Location = new Point(2, 2);
@@ -217,13 +220,26 @@
             cmbTargets.Size = new Size(200, 25);
             cmbTargets.TabIndex = 0;
             // 
+            // btnHealth
+            // 
+            btnHealth.Anchor = AnchorStyles.None;
+            btnHealth.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point, 238);
+            btnHealth.Location = new Point(209, 3);
+            btnHealth.Name = "btnHealth";
+            btnHealth.Size = new Size(40, 26);
+            btnHealth.TabIndex = 1;
+            btnHealth.Text = "💚";
+            toolTip.SetToolTip(btnHealth, "Health Check");
+            btnHealth.UseVisualStyleBackColor = true;
+            btnHealth.Click += btnHealth_Click;
+            // 
             // btnSwitchToExport
             // 
             btnSwitchToExport.Anchor = AnchorStyles.None;
-            btnSwitchToExport.Location = new Point(209, 3);
+            btnSwitchToExport.Location = new Point(255, 3);
             btnSwitchToExport.Name = "btnSwitchToExport";
             btnSwitchToExport.Size = new Size(101, 26);
-            btnSwitchToExport.TabIndex = 1;
+            btnSwitchToExport.TabIndex = 2;
             btnSwitchToExport.Text = "Switch to Export";
             btnSwitchToExport.UseVisualStyleBackColor = true;
             btnSwitchToExport.Click += btnSwitchToExport_Click;
@@ -232,12 +248,12 @@
             // 
             txtPath.Dock = DockStyle.Fill;
             txtPath.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            txtPath.Location = new Point(317, 4);
+            txtPath.Location = new Point(363, 4);
             txtPath.Margin = new Padding(4, 4, 8, 4);
             txtPath.MaxLength = 1000;
             txtPath.Name = "txtPath";
-            txtPath.Size = new Size(521, 25);
-            txtPath.TabIndex = 2;
+            txtPath.Size = new Size(475, 25);
+            txtPath.TabIndex = 3;
             // 
             // btnGo
             // 
@@ -245,7 +261,7 @@
             btnGo.Location = new Point(849, 3);
             btnGo.Name = "btnGo";
             btnGo.Size = new Size(44, 26);
-            btnGo.TabIndex = 3;
+            btnGo.TabIndex = 4;
             btnGo.Text = "GO";
             btnGo.Click += btnGo_Click;
             // 
@@ -318,6 +334,7 @@
         #endregion
         private Panel actionPanel;
         private Button btnImport;
+        private Button btnHealth;
         private Button btnSwitchToExport;
         private Button btnOpenLog;
         private Button btnSaveContent;

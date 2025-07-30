@@ -413,5 +413,25 @@ ORDER BY ExpirationDate DESC";
                 MessageBox.Show("No ApiKey found.", "Read ApiKey", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
+
+        private void btnHealth_Click(object sender, EventArgs e)
+        {
+            var selectedTarget = cmbTargets.SelectedItem as Target;
+            if (selectedTarget == null || string.IsNullOrWhiteSpace(selectedTarget.Name) || selectedTarget.Name == "Select a target...")
+            {
+                MessageBox.Show("Please select a target first.", "Health Check", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Demo implementation - showing target info
+            string healthInfo = $"Health Check for Target: {selectedTarget.Name}\n\n";
+            healthInfo += $"URL: {selectedTarget.Url ?? "Not configured"}\n";
+            healthInfo += $"Import Path: {selectedTarget.ImportPath ?? "Not configured"}\n";
+            healthInfo += $"Database: {selectedTarget.DbServer ?? "Not configured"}/{selectedTarget.DbName ?? "Not configured"}\n";
+            healthInfo += $"Admin URL: {selectedTarget.AdminUrl ?? "Not configured"}\n\n";
+            healthInfo += "Health check functionality will be implemented here.";
+
+            MessageBox.Show(healthInfo, "Health Check", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
     }
 }
