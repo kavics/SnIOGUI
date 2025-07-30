@@ -8,6 +8,7 @@ namespace SnIoGui
         private readonly Target _target;
         private readonly IHealthService _healthService;
         private readonly List<HealthCheckItem> _healthItems = new();
+        private readonly CancellationTokenSource _cancellationTokenSource = new();
 
         private class HealthCheckItem
         {
@@ -42,8 +43,11 @@ namespace SnIoGui
             this.KeyPreview = true;
             this.KeyDown += HealthResultForm_KeyDown;
             
-            // Start sequential health checks
-            _ = PerformHealthChecksAsync();
+            // Handle form closing to cancel async operations
+            this.FormClosing += HealthResultForm_FormClosing;
+            
+            // Start health checks with a 200ms delay after form creation
+            _ = StartHealthChecksWithDelayAsync();
         }
 
         private void HealthResultForm_KeyDown(object sender, KeyEventArgs e)
@@ -52,6 +56,41 @@ namespace SnIoGui
             {
                 this.DialogResult = DialogResult.Cancel;
                 this.Close();
+            }
+        }
+
+        private void HealthResultForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            // Cancel all async operations when form is closing
+            _cancellationTokenSource.Cancel();
+            _cancellationTokenSource.Dispose();
+        }
+
+        private void SafeInvoke(Action action)
+        {
+            try
+            {
+                // Check if form is still valid and not disposed
+                if (!IsDisposed && !_cancellationTokenSource.Token.IsCancellationRequested && IsHandleCreated)
+                {
+                    if (InvokeRequired)
+                    {
+                        Invoke(action);
+                    }
+                    else
+                    {
+                        action();
+                    }
+                }
+            }
+            catch (ObjectDisposedException)
+            {
+                // Form was disposed - ignore the error
+            }
+            catch (InvalidOperationException)
+            {
+                // Form was disposed or handle was destroyed during invoke
+                // This can happen during window switching - ignore the error
             }
         }
 
@@ -85,6 +124,9 @@ namespace SnIoGui
         {
             try
             {
+                // Check if operation was cancelled before starting
+                _cancellationTokenSource.Token.ThrowIfCancellationRequested();
+                
                 // Run all basic checks in parallel
                 var urlTask = CheckUrlAsync();
                 var databaseTask = CheckDatabaseAsync();
@@ -92,6 +134,9 @@ namespace SnIoGui
                 
                 // Wait for all basic checks to complete
                 await Task.WhenAll(urlTask, databaseTask, importPathTask);
+                
+                // Check again if operation was cancelled
+                _cancellationTokenSource.Token.ThrowIfCancellationRequested();
                 
                 // If all basic checks are successful, query repository health
                 bool allBasicChecksGreen = _healthItems.All(item => item.LampColor == Color.Green);
@@ -101,11 +146,15 @@ namespace SnIoGui
                 }
                 
                 // Update final status
-                UpdateFinalStatus();
+                SafeInvoke(() => UpdateFinalStatus());
+            }
+            catch (OperationCanceledException)
+            {
+                // Operation was cancelled - this is expected behavior
             }
             catch (Exception ex)
             {
-                Invoke(() =>
+                SafeInvoke(() =>
                 {
                     AddErrorRow($"Health check failed: {ex.Message}");
                     lblStatus.Text = "❌ UNHEALTHY";
@@ -119,12 +168,12 @@ namespace SnIoGui
             try
             {
                 bool isAccessible = await _healthService.CheckUrlAccessibilityAsync(_target);
-                Invoke(() => UpdateHealthItem(0, isAccessible ? Color.Green : Color.Red, 
+                SafeInvoke(() => UpdateHealthItem(0, isAccessible ? Color.Green : Color.Red, 
                     isAccessible ? "Accessible" : "Not Accessible"));
             }
             catch (Exception ex)
             {
-                Invoke(() => UpdateHealthItem(0, Color.Red, $"Error: {ex.Message}"));
+                SafeInvoke(() => UpdateHealthItem(0, Color.Red, $"Error: {ex.Message}"));
             }
         }
 
@@ -133,12 +182,12 @@ namespace SnIoGui
             try
             {
                 bool isConnected = await _healthService.CheckDatabaseConnectivityAsync(_target);
-                Invoke(() => UpdateHealthItem(1, isConnected ? Color.Green : Color.Red, 
+                SafeInvoke(() => UpdateHealthItem(1, isConnected ? Color.Green : Color.Red, 
                     isConnected ? "Connected" : "Not Connected"));
             }
             catch (Exception ex)
             {
-                Invoke(() => UpdateHealthItem(1, Color.Red, $"Error: {ex.Message}"));
+                SafeInvoke(() => UpdateHealthItem(1, Color.Red, $"Error: {ex.Message}"));
             }
         }
 
@@ -147,14 +196,18 @@ namespace SnIoGui
             try
             {
                 bool isAccessible = await Task.Run(() => 
-                    _healthService.CheckImportPathAccessibility(_target));
+                    _healthService.CheckImportPathAccessibility(_target), _cancellationTokenSource.Token);
                 
-                Invoke(() => UpdateHealthItem(2, isAccessible ? Color.Green : Color.Red, 
+                SafeInvoke(() => UpdateHealthItem(2, isAccessible ? Color.Green : Color.Red, 
                     isAccessible ? "Accessible" : "Not Accessible"));
+            }
+            catch (OperationCanceledException)
+            {
+                // Operation was cancelled - don't update UI
             }
             catch (Exception ex)
             {
-                Invoke(() => UpdateHealthItem(2, Color.Red, $"Error: {ex.Message}"));
+                SafeInvoke(() => UpdateHealthItem(2, Color.Red, $"Error: {ex.Message}"));
             }
         }
 
@@ -165,12 +218,12 @@ namespace SnIoGui
                 var repositoryHealth = await _healthService.QueryRepositoryHealthAsync(_target);
                 if (repositoryHealth != null)
                 {
-                    Invoke(() => AddRepositoryHealthItems(repositoryHealth));
+                    SafeInvoke(() => AddRepositoryHealthItems(repositoryHealth));
                 }
             }
             catch (Exception ex)
             {
-                Invoke(() => AddErrorRow($"Repository Health Query Failed: {ex.Message}"));
+                SafeInvoke(() => AddErrorRow($"Repository Health Query Failed: {ex.Message}"));
             }
         }
 
@@ -373,6 +426,22 @@ namespace SnIoGui
         {
             this.DialogResult = DialogResult.OK;
             this.Close();
+        }
+
+        private async Task StartHealthChecksWithDelayAsync()
+        {
+            try
+            {
+                // Wait 200ms to allow the form to fully initialize and show
+                await Task.Delay(200, _cancellationTokenSource.Token);
+                
+                // Now start the actual health checks
+                await PerformHealthChecksAsync();
+            }
+            catch (OperationCanceledException)
+            {
+                // Form was closed during the delay - this is expected behavior
+            }
         }
     }
 }
