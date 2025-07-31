@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using SenseNet.Extensions.DependencyInjection;
 using SnIoGui.Services;
 using System;
 using System.Windows.Forms;
@@ -24,7 +25,9 @@ namespace SnIoGui
             var services = new ServiceCollection();
             services.AddSingleton<IConfiguration>(configuration);
             services.Configure<SnIoGuiSettings>(configuration.GetSection("SnIoGuiSettings"));
-            
+
+            RegisterSensenNetClient(services, configuration);
+
             // Register HttpClient and health service
             services.AddSingleton<HttpClient>();
             services.AddScoped<IHealthService, HealthService>();
@@ -35,7 +38,37 @@ namespace SnIoGui
 
             ApplicationConfiguration.Initialize();
             var form = ServiceProvider.GetRequiredService<Form1>();
+
             Application.Run(form);
+        }
+
+        private static void RegisterSensenNetClient(ServiceCollection services, IConfiguration configuration)
+        {
+            var senseNetClientBuilder = services.AddSenseNetClient();
+
+            // Get the targets from configuration
+            var targets = configuration.GetSection("SnIoGuiSettings:Targets").Get<List<Target>>();
+            
+            if (targets != null)
+            {
+                // Register each target as a SenseNet repository
+                foreach (var target in targets)
+                {
+                    if (!string.IsNullOrWhiteSpace(target.Name) && 
+                        !string.IsNullOrWhiteSpace(target.Url) && 
+                        !string.IsNullOrWhiteSpace(target.ApiKey))
+                    {
+                        senseNetClientBuilder.ConfigureSenseNetRepository(
+                            target.Name,
+                            repositoryOptions =>
+                            {
+                                repositoryOptions.Url = target.Url;
+                                repositoryOptions.Authentication.ApiKey = target.ApiKey;
+                            },
+                            registeredContentTypes => { });
+                    }
+                }
+            }
         }
     }
 }

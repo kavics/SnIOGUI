@@ -1,5 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.DependencyInjection;
+using SenseNet.Client;
+using SenseNet.Extensions.DependencyInjection;
 using SnIoGui.Services;
 using System.Windows.Forms;
 
@@ -8,12 +10,15 @@ namespace SnIoGui
     public partial class Form2 : Form
     {
         private readonly SnIoGuiSettings _settings;
+        private readonly IRepositoryCollection _repositoryCollection;
         private string? _lastLoadedFilePath;
         private string? _lastLoadedFileContent;
 
-        public Form2(Microsoft.Extensions.Options.IOptions<SnIoGuiSettings> options)
+        public Form2(Microsoft.Extensions.Options.IOptions<SnIoGuiSettings> options, IRepositoryCollection repositoryCollection)
         {
             _settings = options.Value;
+            _repositoryCollection = repositoryCollection;
+            
             InitializeComponent();
             var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
             this.Text = $"sensenet Exporter V{version?.Major}.{version?.Minor}.{version?.Build}";
@@ -68,11 +73,20 @@ namespace SnIoGui
             if (cmbTargets.SelectedIndex > 0 && _settings != null)
             {
                 var selectedTarget = cmbTargets.SelectedItem as Target;
-                if (selectedTarget != null && !string.IsNullOrEmpty(selectedTarget.ImportPath))
+                if (selectedTarget != null && !string.IsNullOrEmpty(selectedTarget.Url))
                 {
-                    txtPath.Text = selectedTarget.ImportPath;
-                    // Automatically trigger btnGo_Click when a valid path is set
-                    btnGo_Click(sender, e);
+                    txtPath.Text = selectedTarget.Url;
+
+                    // Get the repository for this target
+                    var repository = GetRepositoryByTargetName(selectedTarget.Name);
+                    if(repository == null)
+                    {
+                        MessageBox.Show($"Repository for target '{selectedTarget.Name}' not found.", "Repository Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    // For export form, we'll show repository structure
+                    AddRepositoryTreeNode(repository);
                 }
                 else
                 {
@@ -446,6 +460,25 @@ ORDER BY ExpirationDate DESC";
                 btnHealth.Enabled = true;
                 btnHealth.Text = "🌡️";
             }
+        }
+
+        private IRepository? GetRepositoryByTargetName(string targetName)
+        {
+            try
+            {
+                var repository = _repositoryCollection.GetRepositoryAsync(targetName, default).GetAwaiter().GetResult();
+                return repository;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error accessing repository '{targetName}': {ex.Message}", "Repository Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            return null;
+        }
+
+        private void AddRepositoryTreeNode(IRepository repository)
+        {
+            //TODO: Implement logic to add repository structure to the tree
         }
     }
 }
