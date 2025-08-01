@@ -381,12 +381,8 @@ namespace SnIoGui
                                 var repository = GetRepositoryByTargetName(selectedTarget.Name);
                                 if (repository != null)
                                 {
-                                    // Load children of this content
-                                    var request = new LoadCollectionRequest 
-                                    { 
-                                        Path = content.Path,
-                                        Select = new[] { "Name", "Path", "Type", "Id" } // Select only necessary fields for performance
-                                    };
+                                    // Load children of this content sorted by Name
+                                    var request = CommonTools.CreateSortedCollectionRequest(content.Path);
                                     
                                     var contentCollection = await repository.LoadCollectionAsync(request, CancellationToken.None);
                                     
@@ -492,12 +488,8 @@ namespace SnIoGui
                     var repository = GetRepositoryByTargetName(selectedTarget.Name);
                     if (repository != null)
                     {
-                        // Load children of this content
-                        var request = new LoadCollectionRequest 
-                        { 
-                            Path = content.Path,
-                            Select = new[] { "Name", "Path", "Type", "Id" } // Select only necessary fields for performance
-                        };
+                        // Load children of this content sorted by Name
+                        var request = CommonTools.CreateSortedCollectionRequest(content.Path);
                         
                         var contentCollection = await repository.LoadCollectionAsync(request, CancellationToken.None);
                         

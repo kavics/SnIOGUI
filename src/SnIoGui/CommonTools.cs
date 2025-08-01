@@ -390,5 +390,24 @@ ORDER BY ExpirationDate DESC";
                 _ => null
             };
         }
+
+        /// <summary>
+        /// Creates a LoadCollectionRequest with standard settings including sorting by Name
+        /// </summary>
+        /// <param name="path">The content path to load children from</param>
+        /// <param name="selectFields">Fields to select (optional, defaults to Name, Path, Type, Id)</param>
+        /// <param name="orderByFields">Fields to order by (optional, defaults to Name)</param>
+        /// <returns>Configured LoadCollectionRequest</returns>
+        public static LoadCollectionRequest CreateSortedCollectionRequest(string path, 
+            string[]? selectFields = null, 
+            string[]? orderByFields = null)
+        {
+            return new LoadCollectionRequest
+            {
+                Path = path,
+                Select = selectFields ?? new[] { "Name", "Path", "Type", "Id" },
+                OrderBy = orderByFields ?? new[] { "Name" }
+            };
+        }
     }
 }
