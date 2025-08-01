@@ -28,6 +28,10 @@ namespace SnIoGui
             _repositoryCollection = repositoryCollection;
 
             InitializeComponent();
+            
+            // Set manual start position to prevent auto-positioning
+            this.StartPosition = FormStartPosition.Manual;
+            
             var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
             this.Text = $"sensenet Exporter V{version?.Major}.{version?.Minor}.{version?.Build}";
 
@@ -310,6 +314,15 @@ namespace SnIoGui
         {
             // Get Form1 singleton instance and show it, then hide Form2
             var form1 = Program.ServiceProvider.GetRequiredService<Form1>();
+            
+            // Copy current form's size and position to Form1
+            form1.Size = this.Size;
+            form1.Location = this.Location;
+            form1.WindowState = this.WindowState;
+            
+            // Ensure Form1 doesn't auto-position itself when shown again
+            form1.StartPosition = FormStartPosition.Manual;
+            
             this.Hide();
             form1.Show();
         }

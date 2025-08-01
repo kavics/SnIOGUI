@@ -213,6 +213,15 @@ namespace SnIoGui
         {
             // Get Form2 singleton instance and show it, then hide Form1
             var form2 = Program.ServiceProvider.GetRequiredService<Form2>();
+            
+            // Copy current form's size and position to Form2
+            form2.Size = this.Size;
+            form2.Location = this.Location;
+            form2.WindowState = this.WindowState;
+            
+            // Ensure Form2 doesn't auto-position itself when first shown
+            form2.StartPosition = FormStartPosition.Manual;
+            
             this.Hide();
             form2.Show();
         }
