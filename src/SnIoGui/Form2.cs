@@ -264,8 +264,34 @@ namespace SnIoGui
                 // Get Target values
                 var selectedTarget = cmbTargets.SelectedItem as Target;
                 string selectedPath = content.Path;
-                // TODO: Implement export functionality
-                MessageBox.Show($"Export functionality will be implemented for:\nTarget: {selectedTarget?.Name}\nContent: {content.Name}\nPath: {selectedPath}\nType: {content.Type}", "Export", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                
+                if (selectedTarget != null && selectedTarget.Name != "Select a target...")
+                {
+                    // Check if ExportPath is configured
+                    if (string.IsNullOrEmpty(selectedTarget.ExportPath))
+                    {
+                        MessageBox.Show("Export path is not configured for the selected target. Please check the configuration.", "Export Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    // Check if SnIO executable exists
+                    string? snioExe = _settings?.SnIO;
+                    if (string.IsNullOrEmpty(snioExe) || !System.IO.File.Exists(snioExe))
+                    {
+                        MessageBox.Show("SnIO executable not found. Please check the configuration.", "Export Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    // Open ExportForm with the selected content and target
+                    using (var exportForm = new ExportForm(selectedTarget, selectedPath, snioExe))
+                    {
+                        exportForm.ShowDialog(this);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Please select a valid target first.", "Export", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
             }
             else if (tree.SelectedNode?.Tag is string path)
             {
