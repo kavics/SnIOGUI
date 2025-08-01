@@ -2,15 +2,17 @@ using System.Windows.Forms;
 
 namespace SnIoGui
 {
-    partial class ImportForm
+    partial class ExportForm
     {
         private System.ComponentModel.IContainer components = null;
         private Label lblTargetName;
         private Label lblTargetUrl;
         private Label lblSelectedPath;
+        private Label lblExportPath;
         private TextBox txtTargetName;
         private TextBox txtTargetUrl;
         private TextBox txtSelectedPath;
+        private TextBox txtExportPath;
         private Button btnViewScript;
         private TextBox txtScript;
         private Button btnExecuteScript;
@@ -26,18 +28,18 @@ namespace SnIoGui
 
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ImportForm));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ExportForm));
             lblTargetName = new Label();
             lblTargetUrl = new Label();
             lblSelectedPath = new Label();
+            lblExportPath = new Label();
             txtTargetName = new TextBox();
             txtTargetUrl = new TextBox();
             txtSelectedPath = new TextBox();
+            txtExportPath = new TextBox();
             btnViewScript = new Button();
             txtScript = new TextBox();
             btnExecuteScript = new Button();
-            lblTargetPath = new Label();
-            txtTargetPath = new TextBox();
             btnCancel = new Button();
             SuspendLayout();
             // 
@@ -55,9 +57,9 @@ namespace SnIoGui
             lblTargetUrl.AutoSize = true;
             lblTargetUrl.Location = new Point(8, 38);
             lblTargetUrl.Name = "lblTargetUrl";
-            lblTargetUrl.Size = new Size(59, 15);
+            lblTargetUrl.Size = new Size(63, 15);
             lblTargetUrl.TabIndex = 2;
-            lblTargetUrl.Text = "Target url:";
+            lblTargetUrl.Text = "Source url:";
             // 
             // lblSelectedPath
             // 
@@ -67,6 +69,15 @@ namespace SnIoGui
             lblSelectedPath.Size = new Size(81, 15);
             lblSelectedPath.TabIndex = 4;
             lblSelectedPath.Text = "Selected path:";
+            // 
+            // lblExportPath
+            // 
+            lblExportPath.AutoSize = true;
+            lblExportPath.Location = new Point(8, 98);
+            lblExportPath.Name = "lblExportPath";
+            lblExportPath.Size = new Size(71, 15);
+            lblExportPath.TabIndex = 6;
+            lblExportPath.Text = "Export path:";
             // 
             // txtTargetName
             // 
@@ -95,12 +106,21 @@ namespace SnIoGui
             txtSelectedPath.Size = new Size(550, 23);
             txtSelectedPath.TabIndex = 5;
             // 
+            // txtExportPath
+            // 
+            txtExportPath.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtExportPath.Location = new Point(100, 95);
+            txtExportPath.Name = "txtExportPath";
+            txtExportPath.ReadOnly = true;
+            txtExportPath.Size = new Size(550, 23);
+            txtExportPath.TabIndex = 7;
+            // 
             // btnViewScript
             // 
             btnViewScript.Location = new Point(8, 125);
             btnViewScript.Name = "btnViewScript";
             btnViewScript.Size = new Size(140, 40);
-            btnViewScript.TabIndex = 6;
+            btnViewScript.TabIndex = 8;
             btnViewScript.Text = "View Script";
             btnViewScript.UseVisualStyleBackColor = true;
             // 
@@ -114,7 +134,7 @@ namespace SnIoGui
             txtScript.ReadOnly = true;
             txtScript.ScrollBars = ScrollBars.Both;
             txtScript.Size = new Size(770, 189);
-            txtScript.TabIndex = 7;
+            txtScript.TabIndex = 9;
             txtScript.WordWrap = false;
             // 
             // btnExecuteScript
@@ -124,27 +144,9 @@ namespace SnIoGui
             btnExecuteScript.Location = new Point(638, 370);
             btnExecuteScript.Name = "btnExecuteScript";
             btnExecuteScript.Size = new Size(140, 40);
-            btnExecuteScript.TabIndex = 8;
+            btnExecuteScript.TabIndex = 10;
             btnExecuteScript.Text = "Execute Script";
             btnExecuteScript.UseVisualStyleBackColor = true;
-            // 
-            // lblTargetPath
-            // 
-            lblTargetPath.AutoSize = true;
-            lblTargetPath.Location = new Point(8, 98);
-            lblTargetPath.Name = "lblTargetPath";
-            lblTargetPath.Size = new Size(69, 15);
-            lblTargetPath.TabIndex = 9;
-            lblTargetPath.Text = "Target path:";
-            // 
-            // txtTargetPath
-            // 
-            txtTargetPath.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            txtTargetPath.Location = new Point(100, 95);
-            txtTargetPath.Name = "txtTargetPath";
-            txtTargetPath.ReadOnly = true;
-            txtTargetPath.Size = new Size(550, 23);
-            txtTargetPath.TabIndex = 10;
             // 
             // btnCancel
             // 
@@ -152,11 +154,11 @@ namespace SnIoGui
             btnCancel.Location = new Point(492, 370);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(140, 40);
-            btnCancel.TabIndex = 11;
+            btnCancel.TabIndex = 13;
             btnCancel.Text = "Cancel";
             btnCancel.UseVisualStyleBackColor = true;
             // 
-            // ImportForm
+            // ExportForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -167,19 +169,19 @@ namespace SnIoGui
             Controls.Add(txtTargetUrl);
             Controls.Add(lblSelectedPath);
             Controls.Add(txtSelectedPath);
+            Controls.Add(lblExportPath);
+            Controls.Add(txtExportPath);
             Controls.Add(btnViewScript);
             Controls.Add(txtScript);
             Controls.Add(btnExecuteScript);
-            Controls.Add(lblTargetPath);
-            Controls.Add(txtTargetPath);
             Controls.Add(btnCancel);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
             MinimizeBox = false;
-            Name = "ImportForm";
+            Name = "ExportForm";
             StartPosition = FormStartPosition.CenterParent;
-            Text = "Import Script Preview";
+            Text = "Export Script Preview";
             ResumeLayout(false);
             PerformLayout();
         }
