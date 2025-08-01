@@ -14,12 +14,14 @@ namespace SnIoGui
         public Content Content { get; set; }
         public string? CachedJsonData { get; set; }
         public bool JsonLoaded { get; set; }
+        public bool ChildrenLoaded { get; set; }
 
         public ContentNodeData(Content content)
         {
             Content = content;
             CachedJsonData = null;
             JsonLoaded = false;
+            ChildrenLoaded = false;
         }
         
         /// <summary>
@@ -29,6 +31,15 @@ namespace SnIoGui
         {
             CachedJsonData = null;
             JsonLoaded = false;
+        }
+        
+        /// <summary>
+        /// Clears all cached data including children state
+        /// </summary>
+        public void ClearAllCache()
+        {
+            ClearCache();
+            ChildrenLoaded = false;
         }
     }
 
@@ -408,6 +419,26 @@ ORDER BY ExpirationDate DESC";
                 Select = selectFields ?? new[] { "Name", "Path", "Type", "Id" },
                 OrderBy = orderByFields ?? new[] { "Name" }
             };
+        }
+
+        /// <summary>
+        /// Updates TreeNode color based on its loading state
+        /// </summary>
+        /// <param name="node">The TreeNode to update</param>
+        /// <param name="isLoaded">True if the node's children are loaded, false otherwise</param>
+        public static void UpdateNodeLoadingState(TreeNode node, bool isLoaded)
+        {
+            if (node == null) return;
+            
+            node.ForeColor = isLoaded 
+                ? System.Drawing.SystemColors.ControlText 
+                : System.Drawing.Color.Gray;
+                
+            // Update the ContentNodeData if present
+            if (node.Tag is ContentNodeData nodeData)
+            {
+                nodeData.ChildrenLoaded = isLoaded;
+            }
         }
     }
 }

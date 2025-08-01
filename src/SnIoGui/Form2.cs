@@ -392,6 +392,9 @@ namespace SnIoGui
                                         // Remove the placeholder node
                                         e.Node.Nodes.Clear();
                                         
+                                        // Mark this node as loaded and set normal color
+                                        CommonTools.UpdateNodeLoadingState(e.Node, true);
+                                        
                                         if (contentCollection != null)
                                         {
                                             foreach (var childContent in contentCollection)
@@ -419,6 +422,9 @@ namespace SnIoGui
                                     ForeColor = System.Drawing.Color.Red
                                 };
                                 e.Node.Nodes.Add(errorNode);
+                                
+                                // Set the parent node to normal color even if there was an error
+                                CommonTools.UpdateNodeLoadingState(e.Node, true);
                             });
                         }
                     });
@@ -431,7 +437,8 @@ namespace SnIoGui
             var contentNodeData = new ContentNodeData(content);
             var contentNode = new TreeNode(content.Name) 
             { 
-                Tag = contentNodeData
+                Tag = contentNodeData,
+                ForeColor = System.Drawing.Color.Gray // Set unloaded nodes to gray
             };
             
             // Only add placeholder for content types that might have children
@@ -496,6 +503,9 @@ namespace SnIoGui
                         // Update UI - Remove the placeholder node
                         node.Nodes.Clear();
                         
+                        // Mark this node as loaded and set normal color
+                        CommonTools.UpdateNodeLoadingState(node, true);
+                        
                         if (contentCollection != null)
                         {
                             foreach (var childContent in contentCollection)
@@ -512,6 +522,9 @@ namespace SnIoGui
             {
                 // Handle error (e.g. show message, log error, etc.)
                 MessageBox.Show($"Error loading children: {ex.Message}", "Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                
+                // Set the node to normal color even if there was an error
+                CommonTools.UpdateNodeLoadingState(node, true);
             }
         }
 
