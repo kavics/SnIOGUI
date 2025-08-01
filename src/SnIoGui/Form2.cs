@@ -3,7 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 using SenseNet.Client;
 using SenseNet.Extensions.DependencyInjection;
 using SnIoGui.Services;
+using System.Text.Json;
 using System.Windows.Forms;
+using System.Text.Json.Serialization;
 
 namespace SnIoGui
 {
@@ -16,22 +18,29 @@ namespace SnIoGui
         
         // Debouncing timer for tree selection
         private System.Windows.Forms.Timer _selectionTimer;
+        private System.Windows.Forms.Timer _jsonLoadTimer;
         private TreeNode? _pendingSelectedNode;
+        private TreeNode? _pendingJsonNode;
 
         public Form2(Microsoft.Extensions.Options.IOptions<SnIoGuiSettings> options, IRepositoryCollection repositoryCollection)
         {
             _settings = options.Value;
             _repositoryCollection = repositoryCollection;
-            
+
             InitializeComponent();
             var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
             this.Text = $"sensenet Exporter V{version?.Major}.{version?.Minor}.{version?.Build}";
-            
-            // Initialize debouncing timer
+
+            // Initialize debouncing timer for children loading
             _selectionTimer = new System.Windows.Forms.Timer();
             _selectionTimer.Interval = 150; // 150ms debounce
             _selectionTimer.Tick += SelectionTimer_Tick;
-            
+
+            // Initialize debouncing timer for JSON loading
+            _jsonLoadTimer = new System.Windows.Forms.Timer();
+            _jsonLoadTimer.Interval = 200; // 200ms debounce for JSON
+            _jsonLoadTimer.Tick += JsonLoadTimer_Tick;
+
             if (_settings.Targets != null)
             {
                 var targetsWithEmpty = CommonTools.CreateTargetDropdownDataSource(_settings.Targets);
@@ -39,18 +48,20 @@ namespace SnIoGui
                 cmbTargets.DisplayMember = "Name";
                 cmbTargets.SelectedIndex = 0;
             }
-            
+
             txtPath.Text = string.Empty;
             cmbTargets.SelectedIndexChanged += cmbTargets_SelectedIndexChanged;
-            
+
             // Add BeforeExpand event handler for lazy loading
             tree.BeforeExpand += tree_BeforeExpand;
-            
+
             UpdateSearchControls();
-            
+
             // When Form2 is closed, show Form1 again
-            this.FormClosed += (s, e) => {
+            this.FormClosed += (s, e) =>
+            {
                 _selectionTimer?.Dispose(); // Clean up timer
+                _jsonLoadTimer?.Dispose(); // Clean up JSON timer
                 var form1 = Program.ServiceProvider.GetRequiredService<Form1>();
                 if (!form1.Visible)
                     form1.Show();
@@ -111,23 +122,37 @@ namespace SnIoGui
             _lastLoadedFilePath = null;
             _lastLoadedFileContent = null;
 
-            if (e.Node?.Tag is Content content)
+            var contentNodeData = CommonTools.GetContentNodeDataFromTag(e.Node?.Tag);
+            if (contentNodeData != null)
             {
-                // Show content information in the text area
+                var content = contentNodeData.Content;
+                
+                // Show basic content information immediately
                 var contentInfo = $"Name: {content.Name}\n" +
                                 $"Path: {content.Path}\n" +
                                 $"Type: {content.Type}\n" +
-                                $"Id: {content.Id}\n" +
-                                $"Creation Date: {content.CreationDate}\n" +
-                                $"Modification Date: {content.ModificationDate}\n";
+                                $"Id: {content.Id}\n";
                 
-                if (!string.IsNullOrEmpty(content.DisplayName))
-                    contentInfo += $"Display Name: {content.DisplayName}\n";
+                // Check if we already have cached JSON data
+                if (contentNodeData.JsonLoaded && !string.IsNullOrEmpty(contentNodeData.CachedJsonData))
+                {
+                    // Use cached JSON data
+                    txtContent.Text = contentNodeData.CachedJsonData;
+                }
+                else
+                {
+                    // Show loading message and trigger JSON loading
+                    txtContent.Text = contentInfo + "Loading full content manifest...";
+                    
+                    // Set up debounced JSON loading for this node
+                    _pendingJsonNode = e.Node;
+                    _jsonLoadTimer.Stop();
+                    _jsonLoadTimer.Start();
+                }
                 
-                txtContent.Text = contentInfo;
                 btnExport.Enabled = true;  // Enable export for selected content
                 
-                // Set up debounced loading for this node if it has placeholder children
+                // Set up debounced children loading for this node if it has placeholder children
                 if (e.Node.Nodes.Count == 1 && e.Node.Nodes[0].Text == "...loading")
                 {
                     _pendingSelectedNode = e.Node;
@@ -232,7 +257,9 @@ namespace SnIoGui
 
         private void btnExport_Click(object sender, EventArgs e)
         {
-            if (tree.SelectedNode?.Tag is Content content)
+            var content = CommonTools.GetContentFromNodeTag(tree.SelectedNode?.Tag);
+            
+            if (content != null)
             {
                 // Get Target values
                 var selectedTarget = cmbTargets.SelectedItem as Target;
@@ -335,8 +362,9 @@ namespace SnIoGui
             // Check if this node has a placeholder loading node
             if (e.Node?.Nodes.Count == 1 && e.Node.Nodes[0].Text == "...loading")
             {
-                // Get the content from the node's Tag
-                if (e.Node.Tag is Content content)
+                var content = CommonTools.GetContentFromNodeTag(e.Node.Tag);
+                
+                if (content != null)
                 {
                     // Capture UI data on the main thread before going to background
                     var selectedTarget = cmbTargets.SelectedItem as Target;
@@ -356,7 +384,8 @@ namespace SnIoGui
                                     // Load children of this content
                                     var request = new LoadCollectionRequest 
                                     { 
-                                        Path = content.Path 
+                                        Path = content.Path,
+                                        Select = new[] { "Name", "Path", "Type", "Id" } // Select only necessary fields for performance
                                     };
                                     
                                     var contentCollection = await repository.LoadCollectionAsync(request, CancellationToken.None);
@@ -403,9 +432,10 @@ namespace SnIoGui
 
         private TreeNode CreateContentTreeNode(Content content)
         {
+            var contentNodeData = new ContentNodeData(content);
             var contentNode = new TreeNode(content.Name) 
             { 
-                Tag = content
+                Tag = contentNodeData
             };
             
             // Only add placeholder for content types that might have children
@@ -424,8 +454,10 @@ namespace SnIoGui
         {
             _selectionTimer.Stop();
             
-            if (_pendingSelectedNode?.Tag is Content content && 
-                _pendingSelectedNode.Nodes.Count == 1 && 
+            var content = CommonTools.GetContentFromNodeTag(_pendingSelectedNode?.Tag);
+            
+            if (content != null && 
+                _pendingSelectedNode?.Nodes.Count == 1 && 
                 _pendingSelectedNode.Nodes[0].Text == "...loading")
             {
                 // Trigger lazy loading for the selected node
@@ -433,6 +465,19 @@ namespace SnIoGui
             }
             
             _pendingSelectedNode = null;
+        }
+        private async void JsonLoadTimer_Tick(object sender, EventArgs e)
+        {
+            _jsonLoadTimer.Stop();
+            
+            var content = CommonTools.GetContentFromNodeTag(_pendingJsonNode?.Tag);
+            if (content != null)
+            {
+                // Load full JSON content for the selected node
+                await LoadContentJson(_pendingJsonNode, content);
+            }
+            
+            _pendingJsonNode = null;
         }
 
         private async Task LoadChildrenForNode(TreeNode node, Content content)
@@ -450,7 +495,8 @@ namespace SnIoGui
                         // Load children of this content
                         var request = new LoadCollectionRequest 
                         { 
-                            Path = content.Path 
+                            Path = content.Path,
+                            Select = new[] { "Name", "Path", "Type", "Id" } // Select only necessary fields for performance
                         };
                         
                         var contentCollection = await repository.LoadCollectionAsync(request, CancellationToken.None);
@@ -467,24 +513,126 @@ namespace SnIoGui
                                 node.Nodes.Add(childNode);
                             }
                         }
-                        
-                        // If no children were loaded, this becomes a leaf node (no action needed)
                     }
                 }
             }
             catch (Exception ex)
             {
-                // Update UI on the main thread with error
-                this.Invoke(() =>
+                // Handle error (e.g. show message, log error, etc.)
+                MessageBox.Show($"Error loading children: {ex.Message}", "Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        /// <summary>
+        /// Loads and caches JSON content for a selected TreeNode. 
+        /// The JSON data is cached in the ContentNodeData wrapper to avoid repeated server requests.
+        /// </summary>
+        /// <param name="node">The TreeNode containing the ContentNodeData</param>
+        /// <param name="content">The Content object to load JSON for</param>
+        /// <returns>Task representing the async operation</returns>
+        private async Task LoadContentJson(TreeNode node, Content content)
+        {
+            try
+            {
+                // Get the ContentNodeData from the node's Tag
+                ContentNodeData? contentNodeData = null;
+                if (node.Tag is ContentNodeData nodeData)
                 {
-                    // Remove the placeholder and show error
-                    node.Nodes.Clear();
-                    var errorNode = new TreeNode($"Error: {ex.Message}")
+                    contentNodeData = nodeData;
+                    content = nodeData.Content;
+                }
+                
+                // Capture UI data on the main thread
+                var selectedTarget = cmbTargets.SelectedItem as Target;
+                
+                if (selectedTarget != null)
+                {
+                    var repository = GetRepositoryByTargetName(selectedTarget.Name);
+
+                    if (repository != null)
                     {
-                        ForeColor = System.Drawing.Color.Red
-                    };
-                    node.Nodes.Add(errorNode);
-                });
+                        // Create OData request for the content with IsCollectionRequest = false
+                        var request = new ODataRequest(server: repository.Server)
+                        { 
+                            Path = content.Path,
+                            IsCollectionRequest = false
+                        };
+                        
+                        // Use GetResponseStringAsync to get the raw JSON string
+                        var jsonString = await repository.GetResponseStringAsync(request, HttpMethod.Get, CancellationToken.None);
+
+                        if (!string.IsNullOrEmpty(jsonString))
+                        {
+                            try
+                            {
+                                // Clean Unicode escape sequences before parsing
+                                var cleanedJson = CommonTools.CleanUnicodeEscapes(jsonString);
+                                
+                                // Parse the JSON and extract only the "d" property
+                                using var document = JsonDocument.Parse(cleanedJson);
+                                if (document.RootElement.TryGetProperty("d", out var dProperty))
+                                {
+                                    // Convert the "d" property back to formatted JSON string
+                                    var options = new JsonSerializerOptions
+                                    {
+                                        WriteIndented = true
+                                    };
+                                    var dJson = JsonSerializer.Serialize(dProperty, options);
+                                    
+                                    // Clean the final output as well in case of nested escapes
+                                    var finalJson = CommonTools.CleanUnicodeEscapes(dJson);
+                                    
+                                    // Cache the JSON data in the ContentNodeData
+                                    if (contentNodeData != null)
+                                    {
+                                        contentNodeData.CachedJsonData = finalJson;
+                                        contentNodeData.JsonLoaded = true;
+                                    }
+                                    
+                                    // Update UI with JSON content
+                                    txtContent.Text = finalJson;
+                                }
+                                else
+                                {
+                                    // If no "d" property found, show the cleaned original response
+                                    var finalJson = cleanedJson;
+                                    
+                                    // Cache the JSON data in the ContentNodeData
+                                    if (contentNodeData != null)
+                                    {
+                                        contentNodeData.CachedJsonData = finalJson;
+                                        contentNodeData.JsonLoaded = true;
+                                    }
+                                    
+                                    txtContent.Text = finalJson;
+                                }
+                            }
+                            catch (JsonException)
+                            {
+                                // If JSON parsing fails, show the cleaned original response
+                                var finalJson = CommonTools.CleanUnicodeEscapes(jsonString);
+                                
+                                // Cache the JSON data in the ContentNodeData
+                                if (contentNodeData != null)
+                                {
+                                    contentNodeData.CachedJsonData = finalJson;
+                                    contentNodeData.JsonLoaded = true;
+                                }
+                                
+                                txtContent.Text = finalJson;
+                            }
+                        }
+                        else
+                        {
+                            txtContent.Text = "Error: Could not load content data.";
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Show error in text area
+                txtContent.Text = $"Error loading content JSON:\n{ex.Message}";
             }
         }
     }

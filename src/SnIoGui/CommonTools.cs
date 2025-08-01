@@ -2,9 +2,36 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.DependencyInjection;
 using SnIoGui.Services;
 using System.Windows.Forms;
+using SenseNet.Client;
 
 namespace SnIoGui
 {
+    /// <summary>
+    /// Wrapper class to hold both Content and cached JSON data
+    /// </summary>
+    public class ContentNodeData
+    {
+        public Content Content { get; set; }
+        public string? CachedJsonData { get; set; }
+        public bool JsonLoaded { get; set; }
+
+        public ContentNodeData(Content content)
+        {
+            Content = content;
+            CachedJsonData = null;
+            JsonLoaded = false;
+        }
+        
+        /// <summary>
+        /// Clears the cached JSON data, forcing a reload on next access
+        /// </summary>
+        public void ClearCache()
+        {
+            CachedJsonData = null;
+            JsonLoaded = false;
+        }
+    }
+
     /// <summary>
     /// Common tools and utilities shared between Form1 and Form2
     /// </summary>
@@ -274,6 +301,27 @@ ORDER BY ExpirationDate DESC";
         }
 
         /// <summary>
+        /// Cleans up Unicode escape sequences in strings and replaces them with regular characters
+        /// </summary>
+        /// <param name="input">The string to clean</param>
+        /// <returns>Cleaned string with regular characters instead of Unicode escapes</returns>
+        public static string CleanUnicodeEscapes(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return input;
+                
+            // Replace common Unicode escape sequences with their actual characters
+            return input
+                .Replace("\\u0027", "'")  // apostrophe
+                .Replace("\\u0022", "\"") // quotation mark
+                .Replace("\\u0026", "&")  // ampersand
+                .Replace("\\u003C", "<")  // less than
+                .Replace("\\u003E", ">")  // greater than
+                .Replace("\\u005C", "\\") // backslash
+                .Replace("\\u002F", "/");  // forward slash
+        }
+
+        /// <summary>
         /// Displays directory and file listing for the specified path
         /// </summary>
         /// <param name="path">Directory path to list</param>
@@ -311,6 +359,36 @@ ORDER BY ExpirationDate DESC";
             {
                 textContent.Text = "[Could not read directory]";
             }
+        }
+
+        /// <summary>
+        /// Extracts Content from TreeNode.Tag, supporting both ContentNodeData and legacy Content formats
+        /// </summary>
+        /// <param name="nodeTag">The TreeNode.Tag object</param>
+        /// <returns>Content object if found, null otherwise</returns>
+        public static Content? GetContentFromNodeTag(object? nodeTag)
+        {
+            return nodeTag switch
+            {
+                ContentNodeData contentNodeData => contentNodeData.Content,
+                Content directContent => directContent,
+                _ => null
+            };
+        }
+
+        /// <summary>
+        /// Extracts ContentNodeData from TreeNode.Tag, creating a wrapper if needed for legacy Content
+        /// </summary>
+        /// <param name="nodeTag">The TreeNode.Tag object</param>
+        /// <returns>ContentNodeData object if Content is found, null otherwise</returns>
+        public static ContentNodeData? GetContentNodeDataFromTag(object? nodeTag)
+        {
+            return nodeTag switch
+            {
+                ContentNodeData contentNodeData => contentNodeData,
+                Content directContent => new ContentNodeData(directContent),
+                _ => null
+            };
         }
     }
 }
