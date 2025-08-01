@@ -48,8 +48,8 @@ namespace SnIoGui
         public ExportForm(Target target, string selectedPath, string snioExe)
         {
             InitializeComponent();
-            btnViewScript.Click += BtnViewScript_Click;
-            btnExecuteScript.Click += BtnExecuteScript_Click;
+            btnViewScript.Click += BtnViewScript_Click!;
+            btnExecuteScript.Click += BtnExecuteScript_Click!;
             _target = target;
             _snioExe = snioExe;
             TargetName = target?.Name ?? string.Empty;
@@ -118,6 +118,9 @@ namespace SnIoGui
 
         private string GenerateScript(string targetName, string targetUrl, string selectedPath, string targetPath, string apiKey, string exportPath, string snioExe)
         {
+            // Calculate the actual export path by combining the base export path with the parent path of the selected path
+            string actualExportPath = CalculateActualExportPath(selectedPath, exportPath);
+            
             // Script template with placeholders for export operation
             const string template =
                 "$Exe = \"{SnIO}\"\n" +
@@ -134,8 +137,50 @@ namespace SnIoGui
                 .Replace("{TargetUrl}", targetUrl)
                 .Replace("{ApiKey}", apiKey)
                 .Replace("{TargetPath}", targetPath)
-                .Replace("{ExportPath}", exportPath);
+                .Replace("{ExportPath}", actualExportPath);
             return script;
+        }
+
+        private string CalculateActualExportPath(string selectedPath, string baseExportPath)
+        {
+            // If selectedPath is empty or just "/Root", use the base export path
+            if (string.IsNullOrEmpty(selectedPath) || selectedPath == "/Root")
+            {
+                return baseExportPath;
+            }
+
+            // Remove the last segment from the selected path to get the parent path
+            // Example: "/Root/IMS/Public/Manfred/Renters" -> "/Root/IMS/Public/Manfred"
+            string parentPath = GetParentPath(selectedPath);
+            
+            // Combine base export path with the parent path
+            // Remove trailing slashes from baseExportPath to avoid double slashes
+            string cleanBaseExportPath = baseExportPath.TrimEnd('\\', '/');
+            
+            // Convert sensenet path to Windows path format for the filesystem
+            string windowsParentPath = parentPath.Replace("/", "\\");
+            
+            return $"{cleanBaseExportPath}{windowsParentPath}";
+        }
+
+        private string GetParentPath(string path)
+        {
+            // Handle empty or root cases
+            if (string.IsNullOrEmpty(path) || path == "/" || path == "/Root")
+            {
+                return "/Root";
+            }
+
+            // Split the path and remove the last segment
+            var parts = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+            
+            if (parts.Length <= 1)
+            {
+                return "/Root";
+            }
+
+            // Rebuild the path without the last segment
+            return "/" + string.Join("/", parts.Take(parts.Length - 1));
         }
     }
 }
