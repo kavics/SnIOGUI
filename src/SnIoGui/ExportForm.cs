@@ -59,7 +59,6 @@ namespace SnIoGui
             
             // Calculate target path (the content path to export from)
             var targetPath = CalculateTargetPath(selectedPath);
-            txtTargetPath.Text = targetPath;
             
             // Script generation in constructor, using the calculated targetPath and apiKey
             string apiKey = target?.ApiKey ?? string.Empty;
