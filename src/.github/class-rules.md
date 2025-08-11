@@ -1,0 +1,1 @@
+Minden osztály minden member-je legyen dokumentálva.
