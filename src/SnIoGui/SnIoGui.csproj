@@ -21,7 +21,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.6" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.6" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.6" />
-    <PackageReference Include="SenseNet.Client" Version="3.1.0" />
+    <PackageReference Include="SenseNet.Client" Version="4.1.1" />
   </ItemGroup>
 
   <ItemGroup>
