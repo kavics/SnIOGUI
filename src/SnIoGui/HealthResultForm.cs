@@ -1,5 +1,5 @@
-﻿using SnIoGui.Services;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
+using SnIoGui.Services;
 
 namespace SnIoGui
 {
@@ -116,8 +116,22 @@ namespace SnIoGui
             }
             
             // Clear any selection
-            dgvDetails.ClearSelection();
-            dgvDetails.CurrentCell = null;
+            ClearGridSelection();
+        }
+
+        private void ClearGridSelection()
+        {
+            try
+            {
+                // Clear any selection
+                dgvDetails.ClearSelection();
+                dgvDetails.CurrentCell = null;
+            }
+            catch (Exception)
+            {
+                // Ignore any exceptions during selection clearing
+                // This can happen if the grid is being disposed or modified
+            }
         }
 
         private async Task PerformHealthChecksAsync()
@@ -127,6 +141,8 @@ namespace SnIoGui
                 // Check if operation was cancelled before starting
                 _cancellationTokenSource.Token.ThrowIfCancellationRequested();
                 
+                ClearGridSelection();
+
                 // Run all basic checks in parallel
                 var urlTask = CheckUrlAsync();
                 var databaseTask = CheckDatabaseAsync();
@@ -134,7 +150,7 @@ namespace SnIoGui
                 
                 // Wait for all basic checks to complete
                 await Task.WhenAll(urlTask, databaseTask, importPathTask);
-                
+
                 // Check again if operation was cancelled
                 _cancellationTokenSource.Token.ThrowIfCancellationRequested();
                 
@@ -216,10 +232,7 @@ namespace SnIoGui
             try
             {
                 var repositoryHealth = await _healthService.QueryRepositoryHealthAsync(_target);
-                if (repositoryHealth != null)
-                {
-                    SafeInvoke(() => AddRepositoryHealthItems(repositoryHealth));
-                }
+                SafeInvoke(() => AddRepositoryHealthItems(repositoryHealth));
             }
             catch (Exception ex)
             {
@@ -241,15 +254,20 @@ namespace SnIoGui
             }
         }
 
-        private void AddRepositoryHealthItems(RepositoryHealthResult repositoryHealth)
+        private void AddRepositoryHealthItems(RepositoryHealthResult? repositoryHealth)
         {
             // Add repository status
-            if (repositoryHealth.Repository_Status != null)
+            if (repositoryHealth?.Repository_Status != null)
             {
                 bool isRunning = repositoryHealth.Repository_Status.Running;
                 string status = repositoryHealth.Repository_Status.Status ?? "Unknown";
                 string color = isRunning ? "Green" : "Red";
                 AddRepositoryHealthRowWithColor(color, "Running", $"Repository Status: {status}");
+            }
+            else
+            {
+                AddRepositoryHealthRowWithColor("Yellow", "??", $"Repository Status: UNKNOWN");
+                return;
             }
 
             // Add health components
@@ -279,6 +297,9 @@ namespace SnIoGui
                     AddRepositoryHealthRowWithColor(repositoryHealth.Health.Identity.Color, "Healthy", $"Repository Identity (Response Time: {responseTime})");
                 }
             }
+            
+            // Clear selection after adding all repository health items
+            ClearGridSelection();
         }
 
         private void UpdateFinalStatus()
@@ -375,6 +396,9 @@ namespace SnIoGui
             row.Cells["LampColumn"].Style.ForeColor = Color.Red;
             row.Cells["StatusColumn"].Value = "Error";
             row.Cells["DescriptionColumn"].Value = errorMessage;
+            
+            // Clear selection after adding error row
+            ClearGridSelection();
         }
 
         private void SetupDataGrid()
