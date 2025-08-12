@@ -44,6 +44,7 @@
             cmbTargets = new ComboBox();
             btnHealth = new Button();
             btnSwitchToImport = new Button();
+            btnClean = new Button();
             txtPath = new TextBox();
             btnGo = new Button();
             mainSplit = new SplitContainer();
@@ -190,7 +191,8 @@
             // 
             // navLayout
             // 
-            navLayout.ColumnCount = 5;
+            navLayout.ColumnCount = 6;
+            navLayout.ColumnStyles.Add(new ColumnStyle());
             navLayout.ColumnStyles.Add(new ColumnStyle());
             navLayout.ColumnStyles.Add(new ColumnStyle());
             navLayout.ColumnStyles.Add(new ColumnStyle());
@@ -199,8 +201,9 @@
             navLayout.Controls.Add(cmbTargets, 0, 0);
             navLayout.Controls.Add(btnHealth, 1, 0);
             navLayout.Controls.Add(btnSwitchToImport, 2, 0);
-            navLayout.Controls.Add(txtPath, 3, 0);
-            navLayout.Controls.Add(btnGo, 4, 0);
+            navLayout.Controls.Add(btnClean, 3, 0);
+            navLayout.Controls.Add(txtPath, 4, 0);
+            navLayout.Controls.Add(btnGo, 5, 0);
             navLayout.Dock = DockStyle.Fill;
             navLayout.GrowStyle = TableLayoutPanelGrowStyle.FixedSize;
             navLayout.Location = new Point(2, 2);
@@ -244,16 +247,28 @@
             btnSwitchToImport.UseVisualStyleBackColor = true;
             btnSwitchToImport.Click += btnSwitchToImport_Click;
             // 
+            // btnClean
+            // 
+            btnClean.Anchor = AnchorStyles.None;
+            btnClean.Font = new Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point, 238);
+            btnClean.Location = new Point(371, 3);
+            btnClean.Name = "btnClean";
+            btnClean.Size = new Size(60, 26);
+            btnClean.TabIndex = 3;
+            btnClean.Text = "Clean";
+            toolTip.SetToolTip(btnClean, "Clean Database");
+            btnClean.UseVisualStyleBackColor = true;
+            // 
             // txtPath
             // 
             txtPath.Dock = DockStyle.Fill;
             txtPath.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            txtPath.Location = new Point(372, 4);
+            txtPath.Location = new Point(438, 4);
             txtPath.Margin = new Padding(4, 4, 8, 4);
             txtPath.MaxLength = 1000;
             txtPath.Name = "txtPath";
-            txtPath.Size = new Size(466, 25);
-            txtPath.TabIndex = 3;
+            txtPath.Size = new Size(400, 25);
+            txtPath.TabIndex = 4;
             // 
             // btnGo
             // 
@@ -261,7 +276,7 @@
             btnGo.Location = new Point(849, 3);
             btnGo.Name = "btnGo";
             btnGo.Size = new Size(44, 26);
-            btnGo.TabIndex = 4;
+            btnGo.TabIndex = 5;
             btnGo.Text = "GO";
             btnGo.Click += btnGo_Click;
             // 
@@ -335,6 +350,7 @@
         private Panel actionPanel;
         private Button btnExport;
         private Button btnHealth;
+        private Button btnClean;
         private Button btnSwitchToImport;
         private Button btnOpenLog;
         private Button btnSaveContent;
