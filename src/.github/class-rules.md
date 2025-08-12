@@ -1,1 +1,1 @@
-Minden osztály minden member-je legyen dokumentálva.
+Minden osztály minden publikus member-je legyen dokumentálva.
