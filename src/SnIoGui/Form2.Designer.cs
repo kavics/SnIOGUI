@@ -258,6 +258,7 @@
             btnClean.Text = "Clean";
             toolTip.SetToolTip(btnClean, "Clean Database");
             btnClean.UseVisualStyleBackColor = true;
+            btnClean.Click += btnClean_Click;
             // 
             // txtPath
             // 

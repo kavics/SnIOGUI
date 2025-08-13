@@ -722,6 +722,39 @@ namespace SnIoGui
             }
         }
 
+        private void btnClean_Click(object sender, EventArgs e)
+        {
+            var selectedTarget = cmbTargets.SelectedItem as Target;
+            
+            if (selectedTarget != null && selectedTarget.Name != "Select a target...")
+            {
+                // Check if Cleaner executable is configured and exists
+                string? cleanerExe = _settings?.Cleaner;
+                if (string.IsNullOrEmpty(cleanerExe) || !System.IO.File.Exists(cleanerExe))
+                {
+                    MessageBox.Show("Cleaner executable not found. Please check the configuration.", "Clean Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // Check if ExportPath is configured
+                if (string.IsNullOrEmpty(selectedTarget.ExportPath))
+                {
+                    MessageBox.Show("Export path is not configured for the selected target. Please check the configuration.", "Clean Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Open CleanForm with the selected target
+                using (var cleanForm = new CleanForm(selectedTarget, cleanerExe))
+                {
+                    cleanForm.ShowDialog(this);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please select a valid target first.", "Clean", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
         /// <summary>
         /// Override Show to update Clean button state when form becomes visible
         /// </summary>
