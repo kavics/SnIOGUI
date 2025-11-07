@@ -8,23 +8,19 @@ namespace SnIoGui
     public partial class Form1 : Form
     {
         private readonly SnIoGuiSettings _settings;
+        private readonly IRuntimeSettingsManager _settingsManager;
         private string? _lastLoadedFilePath;
         private string? _lastLoadedFileContent;
 
-        public Form1(Microsoft.Extensions.Options.IOptions<SnIoGuiSettings> options)
+        public Form1(Microsoft.Extensions.Options.IOptions<SnIoGuiSettings> options, IRuntimeSettingsManager settingsManager)
         {
             _settings = options.Value;
+            _settingsManager = settingsManager;
             InitializeComponent();
             var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
             this.Text = $"sensenet Importer V{version?.Major}.{version?.Minor}.{version?.Build}";
             
-            if (_settings.Targets != null)
-            {
-                var targetsWithEmpty = CommonTools.CreateTargetDropdownDataSource(_settings.Targets);
-                cmbTargets.DataSource = targetsWithEmpty;
-                cmbTargets.DisplayMember = "Name";
-                cmbTargets.SelectedIndex = 0;
-            }
+            RefreshTargetsList();
             
             txtPath.Text = string.Empty;
             cmbTargets.SelectedIndexChanged += cmbTargets_SelectedIndexChanged;
@@ -32,6 +28,17 @@ namespace SnIoGui
             
             // Handle proper application termination when Form1 is closed
             this.FormClosed += (s, e) => Application.Exit();
+        }
+
+        private void RefreshTargetsList()
+        {
+            if (_settings.Targets != null)
+            {
+                var targetsWithEmpty = CommonTools.CreateTargetDropdownDataSource(_settings.Targets);
+                cmbTargets.DataSource = targetsWithEmpty;
+                cmbTargets.DisplayMember = "Name";
+                cmbTargets.SelectedIndex = 0;
+            }
         }
 
         private void btnOpenAdminUI_Click(object sender, EventArgs e)
@@ -254,6 +261,18 @@ namespace SnIoGui
                 // Re-enable the button and return to default thermometer icon
                 btnHealth.Enabled = true;
                 btnHealth.Text = "🌡️";
+            }
+        }
+
+        private void btnSettings_Click(object sender, EventArgs e)
+        {
+            using (var settingsForm = Program.ServiceProvider.GetRequiredService<SettingsEditorForm>())
+            {
+                if (settingsForm.ShowDialog(this) == DialogResult.OK)
+                {
+                    // Refresh the targets list
+                    RefreshTargetsList();
+                }
             }
         }
     }

@@ -47,6 +47,7 @@
             btnClean = new Button();
             txtPath = new TextBox();
             btnGo = new Button();
+            btnSettings = new Button();
             mainSplit = new SplitContainer();
             tree = new TreeView();
             txtContent = new TextBox();
@@ -191,12 +192,13 @@
             // 
             // navLayout
             // 
-            navLayout.ColumnCount = 6;
+            navLayout.ColumnCount = 7;
             navLayout.ColumnStyles.Add(new ColumnStyle());
             navLayout.ColumnStyles.Add(new ColumnStyle());
             navLayout.ColumnStyles.Add(new ColumnStyle());
             navLayout.ColumnStyles.Add(new ColumnStyle());
             navLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            navLayout.ColumnStyles.Add(new ColumnStyle());
             navLayout.ColumnStyles.Add(new ColumnStyle());
             navLayout.Controls.Add(cmbTargets, 0, 0);
             navLayout.Controls.Add(btnHealth, 1, 0);
@@ -204,6 +206,7 @@
             navLayout.Controls.Add(btnClean, 3, 0);
             navLayout.Controls.Add(txtPath, 4, 0);
             navLayout.Controls.Add(btnGo, 5, 0);
+            navLayout.Controls.Add(btnSettings, 6, 0);
             navLayout.Dock = DockStyle.Fill;
             navLayout.GrowStyle = TableLayoutPanelGrowStyle.FixedSize;
             navLayout.Location = new Point(2, 2);
@@ -274,12 +277,25 @@
             // btnGo
             // 
             btnGo.Anchor = AnchorStyles.None;
-            btnGo.Location = new Point(849, 3);
+            btnGo.Location = new Point(801, 3);
             btnGo.Name = "btnGo";
             btnGo.Size = new Size(44, 26);
             btnGo.TabIndex = 5;
             btnGo.Text = "GO";
             btnGo.Click += btnGo_Click;
+            // 
+            // btnSettings
+            // 
+            btnSettings.Anchor = AnchorStyles.None;
+            btnSettings.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point, 238);
+            btnSettings.Location = new Point(851, 3);
+            btnSettings.Name = "btnSettings";
+            btnSettings.Size = new Size(42, 26);
+            btnSettings.TabIndex = 6;
+            btnSettings.Text = "⚙️";
+            toolTip.SetToolTip(btnSettings, "Settings");
+            btnSettings.UseVisualStyleBackColor = true;
+            btnSettings.Click += btnSettings_Click;
             // 
             // mainSplit
             // 
@@ -365,6 +381,7 @@
         private ComboBox cmbTargets;
         private TextBox txtPath;
         private Button btnGo;
+        private Button btnSettings;
         private SplitContainer mainSplit;
         private TreeView tree;
         private TextBox txtContent;
