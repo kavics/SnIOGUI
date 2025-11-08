@@ -14,5 +14,10 @@ namespace SnIoGui
         public string? DbServer { get; set; }
         public string? DbName { get; set; }
         public string? AdminUrl { get; set; }
+
+        public override string ToString()
+        {
+            return Name ?? "(Unnamed)";
+        }
     }
 }

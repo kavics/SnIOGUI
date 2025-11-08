@@ -13,6 +13,7 @@ namespace SnIoGui
     {
         private readonly SnIoGuiSettings _settings;
         private readonly IRepositoryCollection _repositoryCollection;
+        private readonly IRuntimeSettingsManager _settingsManager;
         private string? _lastLoadedFilePath;
         private string? _lastLoadedFileContent;
         
@@ -22,10 +23,11 @@ namespace SnIoGui
         private TreeNode? _pendingSelectedNode;
         private TreeNode? _pendingJsonNode;
 
-        public Form2(Microsoft.Extensions.Options.IOptions<SnIoGuiSettings> options, IRepositoryCollection repositoryCollection)
+        public Form2(Microsoft.Extensions.Options.IOptions<SnIoGuiSettings> options, IRepositoryCollection repositoryCollection, IRuntimeSettingsManager settingsManager)
         {
             _settings = options.Value;
             _repositoryCollection = repositoryCollection;
+            _settingsManager = settingsManager;
 
             InitializeComponent();
             
@@ -45,13 +47,7 @@ namespace SnIoGui
             _jsonLoadTimer.Interval = 200; // 200ms debounce for JSON
             _jsonLoadTimer.Tick += JsonLoadTimer_Tick;
 
-            if (_settings.Targets != null)
-            {
-                var targetsWithEmpty = CommonTools.CreateTargetDropdownDataSource(_settings.Targets);
-                cmbTargets.DataSource = targetsWithEmpty;
-                cmbTargets.DisplayMember = "Name";
-                cmbTargets.SelectedIndex = 0;
-            }
+            RefreshTargetsList();
 
             txtPath.Text = string.Empty;
             cmbTargets.SelectedIndexChanged += cmbTargets_SelectedIndexChanged;
@@ -71,6 +67,17 @@ namespace SnIoGui
                 if (!form1.Visible)
                     form1.Show();
             };
+        }
+
+        private void RefreshTargetsList()
+        {
+            if (_settings.Targets != null)
+            {
+                var targetsWithEmpty = CommonTools.CreateTargetDropdownDataSource(_settings.Targets);
+                cmbTargets.DataSource = targetsWithEmpty;
+                cmbTargets.DisplayMember = "Name";
+                cmbTargets.SelectedIndex = 0;
+            }
         }
 
         private void btnOpenAdminUI_Click(object sender, EventArgs e)
@@ -762,6 +769,19 @@ namespace SnIoGui
         {
             base.Show();
             UpdateCleanButtonState();
+        }
+
+        private void btnSettings_Click(object sender, EventArgs e)
+        {
+            using (var settingsForm = Program.ServiceProvider.GetRequiredService<SettingsEditorForm>())
+            {
+                if (settingsForm.ShowDialog(this) == DialogResult.OK)
+                {
+                    // Refresh the targets list
+                    RefreshTargetsList();
+                    UpdateCleanButtonState();
+                }
+            }
         }
     }
 }
