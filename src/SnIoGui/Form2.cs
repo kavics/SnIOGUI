@@ -13,6 +13,7 @@ namespace SnIoGui
     {
         private readonly SnIoGuiSettings _settings;
         private readonly IRepositoryCollection _repositoryCollection;
+        private readonly IRuntimeSettingsManager _settingsManager;
         private string? _lastLoadedFilePath;
         private string? _lastLoadedFileContent;
         
@@ -22,10 +23,11 @@ namespace SnIoGui
         private TreeNode? _pendingSelectedNode;
         private TreeNode? _pendingJsonNode;
 
-        public Form2(Microsoft.Extensions.Options.IOptions<SnIoGuiSettings> options, IRepositoryCollection repositoryCollection)
+        public Form2(Microsoft.Extensions.Options.IOptions<SnIoGuiSettings> options, IRepositoryCollection repositoryCollection, IRuntimeSettingsManager settingsManager)
         {
             _settings = options.Value;
             _repositoryCollection = repositoryCollection;
+            _settingsManager = settingsManager;
 
             InitializeComponent();
             
@@ -45,13 +47,7 @@ namespace SnIoGui
             _jsonLoadTimer.Interval = 200; // 200ms debounce for JSON
             _jsonLoadTimer.Tick += JsonLoadTimer_Tick;
 
-            if (_settings.Targets != null)
-            {
-                var targetsWithEmpty = CommonTools.CreateTargetDropdownDataSource(_settings.Targets);
-                cmbTargets.DataSource = targetsWithEmpty;
-                cmbTargets.DisplayMember = "Name";
-                cmbTargets.SelectedIndex = 0;
-            }
+            RefreshTargetsList();
 
             txtPath.Text = string.Empty;
             cmbTargets.SelectedIndexChanged += cmbTargets_SelectedIndexChanged;
@@ -60,6 +56,7 @@ namespace SnIoGui
             tree.BeforeExpand += tree_BeforeExpand;
 
             UpdateSearchControls();
+            UpdateCleanButtonState(); // Initialize Clean button state
 
             // When Form2 is closed, show Form1 again
             this.FormClosed += (s, e) =>
@@ -70,6 +67,17 @@ namespace SnIoGui
                 if (!form1.Visible)
                     form1.Show();
             };
+        }
+
+        private void RefreshTargetsList()
+        {
+            if (_settings.Targets != null)
+            {
+                var targetsWithEmpty = CommonTools.CreateTargetDropdownDataSource(_settings.Targets);
+                cmbTargets.DataSource = targetsWithEmpty;
+                cmbTargets.DisplayMember = "Name";
+                cmbTargets.SelectedIndex = 0;
+            }
         }
 
         private void btnOpenAdminUI_Click(object sender, EventArgs e)
@@ -112,6 +120,7 @@ namespace SnIoGui
                 txtPath.Text = string.Empty;
             }
             UpdateSearchControls();
+            UpdateCleanButtonState(); // Update Clean button state when target changes
         }
 
         // Show file or directory content in textarea when a node is selected
@@ -211,6 +220,40 @@ namespace SnIoGui
             btnSearch.Enabled = hasNodes;
         }
 
+        /// <summary>
+        /// Updates the enabled state of the Clean button based on configuration and directory existence
+        /// </summary>
+        private void UpdateCleanButtonState()
+        {
+            bool isEnabled = false;
+            
+            try
+            {
+                // Check if Cleaner executable is configured and exists
+                if (!string.IsNullOrEmpty(_settings?.Cleaner) && System.IO.File.Exists(_settings.Cleaner))
+                {
+                    // Check if a valid target is selected
+                    var selectedTarget = cmbTargets.SelectedItem as Target;
+                    if (selectedTarget != null && selectedTarget.Name != "Select a target...")
+                    {
+                        // Check if ExportPath is configured and directory exists
+                        if (!string.IsNullOrEmpty(selectedTarget.ExportPath) && 
+                            System.IO.Directory.Exists(selectedTarget.ExportPath))
+                        {
+                            isEnabled = true;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // If any error occurs during validation, keep button disabled
+                isEnabled = false;
+            }
+            
+            btnClean.Enabled = isEnabled;
+        }
+
         private void btnGo_Click(object sender, EventArgs e)
         {
             tree.Nodes.Clear();
@@ -289,7 +332,13 @@ namespace SnIoGui
                     // Open ExportForm with the selected content and target
                     using (var exportForm = new ExportForm(selectedTarget, selectedPath, snioExe))
                     {
-                        exportForm.ShowDialog(this);
+                        var result = exportForm.ShowDialog(this);
+                        
+                        // Update Clean button state after export script execution
+                        if (result == DialogResult.OK)
+                        {
+                            UpdateCleanButtonState();
+                        }
                     }
                 }
                 else
@@ -677,6 +726,61 @@ namespace SnIoGui
             {
                 // Show error in text area
                 txtContent.Text = $"Error loading content JSON:\n{ex.Message}";
+            }
+        }
+
+        private void btnClean_Click(object sender, EventArgs e)
+        {
+            var selectedTarget = cmbTargets.SelectedItem as Target;
+            
+            if (selectedTarget != null && selectedTarget.Name != "Select a target...")
+            {
+                // Check if Cleaner executable is configured and exists
+                string? cleanerExe = _settings?.Cleaner;
+                if (string.IsNullOrEmpty(cleanerExe) || !System.IO.File.Exists(cleanerExe))
+                {
+                    MessageBox.Show("Cleaner executable not found. Please check the configuration.", "Clean Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // Check if ExportPath is configured
+                if (string.IsNullOrEmpty(selectedTarget.ExportPath))
+                {
+                    MessageBox.Show("Export path is not configured for the selected target. Please check the configuration.", "Clean Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Open CleanForm with the selected target
+                using (var cleanForm = new CleanForm(selectedTarget, cleanerExe))
+                {
+                    cleanForm.ShowDialog(this);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please select a valid target first.", "Clean", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        /// <summary>
+        /// Override Show to update Clean button state when form becomes visible
+        /// </summary>
+        public new void Show()
+        {
+            base.Show();
+            UpdateCleanButtonState();
+        }
+
+        private void btnSettings_Click(object sender, EventArgs e)
+        {
+            using (var settingsForm = Program.ServiceProvider.GetRequiredService<SettingsEditorForm>())
+            {
+                if (settingsForm.ShowDialog(this) == DialogResult.OK)
+                {
+                    // Refresh the targets list
+                    RefreshTargetsList();
+                    UpdateCleanButtonState();
+                }
             }
         }
     }

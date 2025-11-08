@@ -15,25 +15,33 @@ namespace SnIoGui
         [STAThread]
         static void Main()
         {
-
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddUserSecrets("3ffc4eca-efea-406a-ac9b-287d104967f4")
-                .Build();
-
             var services = new ServiceCollection();
-            services.AddSingleton<IConfiguration>(configuration);
-            services.Configure<SnIoGuiSettings>(configuration.GetSection("SnIoGuiSettings"));
-
-            RegisterSensenNetClient(services, configuration);
+            
+            // Register RuntimeSettingsManager as singleton
+            services.AddSingleton<IRuntimeSettingsManager, RuntimeSettingsManager>();
+            
+            // Register settings accessor
+            services.AddSingleton(sp => 
+            {
+                var settingsManager = sp.GetRequiredService<IRuntimeSettingsManager>();
+                return Options.Create(settingsManager.Settings);
+            });
 
             // Register HttpClient and health service
             services.AddSingleton<HttpClient>();
             services.AddScoped<IHealthService, HealthService>();
             
+            // Register SenseNet clients BEFORE building ServiceProvider
+            // Create a temporary provider to access settings
+            var tempProvider = services.BuildServiceProvider();
+            RegisterSenseNetClient(services, tempProvider);
+            
+            // Register forms AFTER SenseNet clients are registered
             services.AddSingleton<Form1>();
             services.AddSingleton<Form2>();
+            services.AddTransient<SettingsEditorForm>();
+            
+            // Build the final ServiceProvider with all registrations
             ServiceProvider = services.BuildServiceProvider();
 
             ApplicationConfiguration.Initialize();
@@ -42,12 +50,13 @@ namespace SnIoGui
             Application.Run(form);
         }
 
-        private static void RegisterSensenNetClient(ServiceCollection services, IConfiguration configuration)
+        private static void RegisterSenseNetClient(ServiceCollection services, IServiceProvider tempProvider)
         {
+            var settingsManager = tempProvider.GetRequiredService<IRuntimeSettingsManager>();
             var senseNetClientBuilder = services.AddSenseNetClient();
 
-            // Get the targets from configuration
-            var targets = configuration.GetSection("SnIoGuiSettings:Targets").Get<List<Target>>();
+            // Get the targets from settings
+            var targets = settingsManager.Settings.Targets;
             
             if (targets != null)
             {
