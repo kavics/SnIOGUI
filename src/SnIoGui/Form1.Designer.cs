@@ -74,7 +74,7 @@
             actionPanel.Location = new Point(0, 36);
             actionPanel.Name = "actionPanel";
             actionPanel.Padding = new Padding(2);
-            actionPanel.Size = new Size(900, 32);
+            actionPanel.Size = new Size(1200, 32);
             actionPanel.TabIndex = 1;
             // 
             // btnReadApiKey
@@ -171,7 +171,7 @@
             btnSaveContent.Dock = DockStyle.Right;
             btnSaveContent.Enabled = false;
             btnSaveContent.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
-            btnSaveContent.Location = new Point(858, 2);
+            btnSaveContent.Location = new Point(1158, 2);
             btnSaveContent.Name = "btnSaveContent";
             btnSaveContent.Size = new Size(40, 28);
             btnSaveContent.TabIndex = 1;
@@ -186,7 +186,7 @@
             panelNav.Location = new Point(0, 0);
             panelNav.Name = "panelNav";
             panelNav.Padding = new Padding(2);
-            panelNav.Size = new Size(900, 36);
+            panelNav.Size = new Size(1200, 36);
             panelNav.TabIndex = 2;
             // 
             // navLayout
@@ -210,7 +210,7 @@
             navLayout.Name = "navLayout";
             navLayout.RowCount = 1;
             navLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            navLayout.Size = new Size(896, 32);
+            navLayout.Size = new Size(1196, 32);
             navLayout.TabIndex = 0;
             // 
             // cmbTargets
@@ -255,13 +255,13 @@
             txtPath.Margin = new Padding(4, 4, 8, 4);
             txtPath.MaxLength = 1000;
             txtPath.Name = "txtPath";
-            txtPath.Size = new Size(427, 25);
+            txtPath.Size = new Size(727, 25);
             txtPath.TabIndex = 3;
             // 
             // btnGo
             // 
             btnGo.Anchor = AnchorStyles.None;
-            btnGo.Location = new Point(801, 3);
+            btnGo.Location = new Point(1101, 3);
             btnGo.Name = "btnGo";
             btnGo.Size = new Size(44, 26);
             btnGo.TabIndex = 4;
@@ -272,7 +272,7 @@
             // 
             btnSettings.Anchor = AnchorStyles.None;
             btnSettings.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point, 238);
-            btnSettings.Location = new Point(851, 3);
+            btnSettings.Location = new Point(1151, 3);
             btnSettings.Name = "btnSettings";
             btnSettings.Size = new Size(42, 26);
             btnSettings.TabIndex = 5;
@@ -296,8 +296,8 @@
             // 
             mainSplit.Panel2.Controls.Add(txtContent);
             mainSplit.Panel2MinSize = 100;
-            mainSplit.Size = new Size(900, 532);
-            mainSplit.SplitterDistance = 246;
+            mainSplit.Size = new Size(1200, 593);
+            mainSplit.SplitterDistance = 390;
             mainSplit.TabIndex = 0;
             // 
             // tree
@@ -306,7 +306,7 @@
             tree.HideSelection = false;
             tree.Location = new Point(0, 0);
             tree.Name = "tree";
-            tree.Size = new Size(246, 532);
+            tree.Size = new Size(390, 593);
             tree.TabIndex = 0;
             tree.AfterSelect += tree_AfterSelect;
             // 
@@ -318,7 +318,7 @@
             txtContent.Multiline = true;
             txtContent.Name = "txtContent";
             txtContent.ScrollBars = ScrollBars.Both;
-            txtContent.Size = new Size(650, 532);
+            txtContent.Size = new Size(806, 593);
             txtContent.TabIndex = 0;
             txtContent.TextChanged += txtContent_TextChanged;
             // 
@@ -326,12 +326,12 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(900, 600);
+            ClientSize = new Size(1200, 661);
             Controls.Add(mainSplit);
             Controls.Add(actionPanel);
             Controls.Add(panelNav);
             Icon = (Icon)resources.GetObject("$this.Icon");
-            MinimumSize = new Size(700, 400);
+            MinimumSize = new Size(1050, 600);
             Name = "Form1";
             Text = "Form1";
             actionPanel.ResumeLayout(false);
