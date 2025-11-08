@@ -31,15 +31,18 @@ namespace SnIoGui
             services.AddSingleton<HttpClient>();
             services.AddScoped<IHealthService, HealthService>();
             
-            // Register forms
+            // Register SenseNet clients BEFORE building ServiceProvider
+            // Create a temporary provider to access settings
+            var tempProvider = services.BuildServiceProvider();
+            RegisterSenseNetClient(services, tempProvider);
+            
+            // Register forms AFTER SenseNet clients are registered
             services.AddSingleton<Form1>();
             services.AddSingleton<Form2>();
             services.AddTransient<SettingsEditorForm>();
             
+            // Build the final ServiceProvider with all registrations
             ServiceProvider = services.BuildServiceProvider();
-
-            // Register SenseNet clients
-            RegisterSenseNetClient(services, ServiceProvider);
 
             ApplicationConfiguration.Initialize();
             var form = ServiceProvider.GetRequiredService<Form1>();
