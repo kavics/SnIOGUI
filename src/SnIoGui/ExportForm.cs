@@ -35,6 +35,11 @@ namespace SnIoGui
             get => txtExportPath.Text;
             set => txtExportPath.Text = value;
         }
+        public string Filter
+        {
+            get => txtFilter.Text;
+            set => txtFilter.Text = value;
+        }
         public string Script
         {
             get => txtScript.Text;
@@ -50,6 +55,7 @@ namespace SnIoGui
             InitializeComponent();
             btnViewScript.Click += BtnViewScript_Click!;
             btnExecuteScript.Click += BtnExecuteScript_Click!;
+            txtFilter.TextChanged += TxtFilter_TextChanged!;
             _target = target;
             _snioExe = snioExe;
             TargetName = target?.Name ?? string.Empty;
@@ -82,6 +88,16 @@ namespace SnIoGui
             // If it's a file system path, we'll need to convert it
             // For now, assume it's already the correct sensenet path format
             return selectedPath.Replace("\\", "/");
+        }
+
+        private void TxtFilter_TextChanged(object sender, EventArgs e)
+        {
+            string apiKey = _target?.ApiKey ?? string.Empty;
+            string exportPath = _target?.ExportPath ?? string.Empty;
+            var targetPath = CalculateTargetPath(SelectedPath);
+            _generatedScript = GenerateScript(TargetName, TargetUrl, SelectedPath, targetPath, apiKey, exportPath, _snioExe);
+            if (txtScript.Lines.Length > 1 || (txtScript.Lines.Length == 1 && txtScript.Lines[0].Length > 0))
+                txtScript.Lines = _generatedScript.Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.None);
         }
 
         private void BtnViewScript_Click(object sender, EventArgs e)
@@ -120,15 +136,24 @@ namespace SnIoGui
         {
             // Calculate the actual export path by combining the base export path with the parent path of the selected path
             string actualExportPath = CalculateActualExportPath(selectedPath, exportPath);
-            
+            string filter = Filter;
+
+            // Build the export command line with optional -FILTER argument
+            string exportCommand = string.IsNullOrEmpty(filter)
+                ? "& $Exe EXPORT --DISPLAY:LEVEL Verbose -SOURCE -URL $Url -PATH $SourcePath -APIKEY $ApiKey -TARGET $ExportPath"
+                : "& $Exe EXPORT --DISPLAY:LEVEL Verbose -SOURCE -URL $Url -PATH $SourcePath -FILTER $Filter -APIKEY $ApiKey -TARGET $ExportPath";
+
+            string filterLine = string.IsNullOrEmpty(filter) ? string.Empty : $"\n$Filter = \"{filter}\"";
+
             // Script template with placeholders for export operation
-            const string template =
+            string template =
                 "$Exe = \"{SnIO}\"\n" +
                 "$Url = \"{TargetUrl}\"\n" +
                 "$ApiKey = \"{ApiKey}\"\n" +
                 "$SourcePath = \"{TargetPath}\"\n" +
-                "$ExportPath = \"{ExportPath}\"\n\n" +
-                "& $Exe EXPORT --DISPLAY:LEVEL Verbose -SOURCE -URL $Url -PATH $SourcePath -APIKEY $ApiKey -TARGET $ExportPath\n" +
+                "$ExportPath = \"{ExportPath}\"" +
+                "{FilterLine}\n\n" +
+                exportCommand + "\n" +
                 "Write-Host 'Press any key to close...'\n" +
                 "$null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')";
 
@@ -137,7 +162,8 @@ namespace SnIoGui
                 .Replace("{TargetUrl}", targetUrl)
                 .Replace("{ApiKey}", apiKey)
                 .Replace("{TargetPath}", targetPath)
-                .Replace("{ExportPath}", actualExportPath);
+                .Replace("{ExportPath}", actualExportPath)
+                .Replace("{FilterLine}", filterLine);
             return script;
         }
 

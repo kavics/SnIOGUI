@@ -13,6 +13,8 @@ namespace SnIoGui
         private TextBox txtTargetUrl;
         private TextBox txtSelectedPath;
         private TextBox txtExportPath;
+        private Label lblFilter;
+        private TextBox txtFilter;
         private Button btnViewScript;
         private TextBox txtScript;
         private Button btnExecuteScript;
@@ -33,10 +35,12 @@ namespace SnIoGui
             lblTargetUrl = new Label();
             lblSelectedPath = new Label();
             lblExportPath = new Label();
+            lblFilter = new Label();
             txtTargetName = new TextBox();
             txtTargetUrl = new TextBox();
             txtSelectedPath = new TextBox();
             txtExportPath = new TextBox();
+            txtFilter = new TextBox();
             btnViewScript = new Button();
             txtScript = new TextBox();
             btnExecuteScript = new Button();
@@ -115,12 +119,29 @@ namespace SnIoGui
             txtExportPath.Size = new Size(550, 23);
             txtExportPath.TabIndex = 7;
             // 
+            // lblFilter
+            // 
+            lblFilter.AutoSize = true;
+            lblFilter.Location = new Point(8, 128);
+            lblFilter.Name = "lblFilter";
+            lblFilter.Size = new Size(36, 15);
+            lblFilter.TabIndex = 8;
+            lblFilter.Text = "Filter:";
+            // 
+            // txtFilter
+            // 
+            txtFilter.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtFilter.Location = new Point(100, 125);
+            txtFilter.Name = "txtFilter";
+            txtFilter.Size = new Size(550, 23);
+            txtFilter.TabIndex = 9;
+            // 
             // btnViewScript
             // 
-            btnViewScript.Location = new Point(8, 125);
+            btnViewScript.Location = new Point(8, 155);
             btnViewScript.Name = "btnViewScript";
             btnViewScript.Size = new Size(140, 40);
-            btnViewScript.TabIndex = 8;
+            btnViewScript.TabIndex = 10;
             btnViewScript.Text = "View Script";
             btnViewScript.UseVisualStyleBackColor = true;
             // 
@@ -128,30 +149,30 @@ namespace SnIoGui
             // 
             txtScript.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             txtScript.Font = new Font("Consolas", 10F);
-            txtScript.Location = new Point(8, 175);
+            txtScript.Location = new Point(8, 205);
             txtScript.Multiline = true;
             txtScript.Name = "txtScript";
             txtScript.ReadOnly = true;
             txtScript.ScrollBars = ScrollBars.Both;
             txtScript.Size = new Size(770, 189);
-            txtScript.TabIndex = 9;
+            txtScript.TabIndex = 11;
             txtScript.WordWrap = false;
             // 
             // btnExecuteScript
             // 
             btnExecuteScript.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             btnExecuteScript.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            btnExecuteScript.Location = new Point(638, 370);
+            btnExecuteScript.Location = new Point(638, 400);
             btnExecuteScript.Name = "btnExecuteScript";
             btnExecuteScript.Size = new Size(140, 40);
-            btnExecuteScript.TabIndex = 10;
+            btnExecuteScript.TabIndex = 12;
             btnExecuteScript.Text = "Execute Script";
             btnExecuteScript.UseVisualStyleBackColor = true;
             // 
             // btnCancel
             // 
             btnCancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            btnCancel.Location = new Point(492, 370);
+            btnCancel.Location = new Point(492, 400);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(140, 40);
             btnCancel.TabIndex = 13;
@@ -162,7 +183,7 @@ namespace SnIoGui
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 430);
+            ClientSize = new Size(800, 460);
             Controls.Add(lblTargetName);
             Controls.Add(txtTargetName);
             Controls.Add(lblTargetUrl);
@@ -171,6 +192,8 @@ namespace SnIoGui
             Controls.Add(txtSelectedPath);
             Controls.Add(lblExportPath);
             Controls.Add(txtExportPath);
+            Controls.Add(lblFilter);
+            Controls.Add(txtFilter);
             Controls.Add(btnViewScript);
             Controls.Add(txtScript);
             Controls.Add(btnExecuteScript);
